@@ -5,6 +5,8 @@ class Game {
     // Game Variables
     private int players;
     private int timeout;
+    private int botsLost;
+    private boolean[] inGame;
     private IBot[] bots;
     private IRules rules;
     private IGameState state;
@@ -22,6 +24,11 @@ class Game {
         bots = arrayOfBots;
         rules = gameRules;
         state = gameState;
+
+        inGame = new boolean[players];
+        for (int i = 0; i < players; i++) {
+            inGame[i] = true;
+        }
     }
 
     // Main Game Process
@@ -34,6 +41,19 @@ class Game {
         boolean gameFinished = false;
         int turn = 0;
         while (!gameFinished) {
+            // Check if any bots are left in-game and skip if current bot is lost.
+            if (!inGame[turn]) {
+                if (turn == 0) {
+                    botsLost = 1;
+                } else {
+                    botsLost++;
+                    if (botsLost == players) {
+                        gameFinished = true;
+                    }
+                }
+                continue;
+            }
+
             System.out.println("Bot #" + turn + "'s turn now.");
 
             // Start new thread with method of bot which turn is now.
@@ -50,14 +70,14 @@ class Game {
                         gameFinished = true;
                     }
                 } else {
-                    System.out.println("Bot #" + turn + " made invalid action.");
+                    System.out.println("Bot #" + turn + " made invalid action. It has lost.");
                 }
             } catch (InterruptedException | ExecutionException e) {
                 // Internal thread exceptions
                 e.printStackTrace();
             } catch (TimeoutException te) {
                 // No trial was made in TIMEOUT seconds
-                System.out.println("Bot #" + turn + " was timed out.");
+                System.out.println("Bot #" + turn + " was timed out. It has lost.");
             }
 
             // Give turn to the next bot
