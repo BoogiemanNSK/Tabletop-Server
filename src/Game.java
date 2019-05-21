@@ -2,12 +2,14 @@ import java.util.concurrent.*;
 
 class Game {
 
+    // Game Variables
     private int players;
     private int timeout;
     private IBot[] bots;
     private IRules rules;
     private IGameState state;
 
+    // Game Constructor
     Game(
             int numberOfPlayers,
             int allowedTimeout,
@@ -22,6 +24,7 @@ class Game {
         state = gameState;
     }
 
+    // Main Game Process
     void Play() {
         // High-level API to work with threads
         // In this case in need only one thread at a time - thus we use SingleThreadExecutor
@@ -34,7 +37,8 @@ class Game {
             System.out.println("Bot #" + turn + "'s turn now.");
 
             // Start new thread with method of bot which turn is now.
-            Future<IAction> threadProcess = executor.submit(bots[turn].makeDecision(state));
+            Decision d = new Decision(bots[turn], state);
+            Future<IAction> threadProcess = executor.submit(d);
 
             try {
                 // Wait for bot's action some fixed amount of time
@@ -42,7 +46,7 @@ class Game {
 
                 // Validate bot's action and check for finishing state
                 if (rules.validate(state, decision)) {
-                    if (rules.checkResult()) {
+                    if (rules.checkResult(state)) {
                         gameFinished = true;
                     }
                 } else {
@@ -56,6 +60,7 @@ class Game {
                 System.out.println("Bot #" + turn + " was timed out.");
             }
 
+            // Give turn to the next bot
             turn = (turn + 1) % players;
             System.out.println();
         }
