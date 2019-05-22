@@ -1,5 +1,6 @@
 class ActionTicTacToe implements IAction {
 
-    int move;
+    Integer position;
+    Character symbol;
 
 }
