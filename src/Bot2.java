@@ -29,6 +29,7 @@ class Bot2 implements IBot {
         IAction action = new ActionTicTacToe();
         action.position = position;
         action.symbol = mySign;
+        return action;
     }
 
 }
