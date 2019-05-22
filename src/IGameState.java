@@ -1,5 +1,5 @@
 public interface IGameState {
-    String[][] GameField();
+    char[][] GameField();
     void showField();
 
 }
