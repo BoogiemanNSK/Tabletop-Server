@@ -1,10 +1,10 @@
 public interface IRules {
 
-    public boolean validate(GameStateTicTacToe game, ActionTicTacToe x);
+    boolean validate(GameStateTicTacToe game, ActionTicTacToe x);
 
-    public void update(GameStateTicTacToe game, ActionTicTacToe action);
+    void update(GameStateTicTacToe game, ActionTicTacToe action);
 
-    public String checkResult(GameStateTicTacToe game);
+    String checkResult(GameStateTicTacToe game);
 
 
 
