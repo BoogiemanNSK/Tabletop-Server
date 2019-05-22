@@ -1,13 +1,13 @@
 public class GameStateTicTacToe implements IGameState {
-    private String [][] gameField;
+    private char [][] gameField;
 
     public GameStateTicTacToe(){
-        this.gameField = new String[3][3];
+        this.gameField = new char[3][3];
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j ++)
-                gameField[i][j] = "__";
+                gameField[i][j] = '_';
     }
-    public String[][] GameField(){
+    public char[][] GameField(){
         return gameField;
     }
 
