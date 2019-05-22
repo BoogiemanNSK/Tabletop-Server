@@ -20,11 +20,13 @@ public class Bot1 implements IBot {
             my_step.symbol = my_sign;
 
             System.out.println("By the way, winner step! :)");
-            return null;
+            return my_step;
         }
         int[] empty = emptyIndices(action);
         int temp2 = getRandom(empty);
-        return null;
+        my_step.position = temp;
+        my_step.symbol = my_sign;
+        return my_step;
     }
     private int isWinner(IGameState s2, char t){
         String [] action = matrixSmall(s2);
