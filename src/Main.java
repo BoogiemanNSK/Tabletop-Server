@@ -7,9 +7,9 @@ public class Main {
 
     public static void main(String[] args) {
         // Fill array of bots with existing bots
-        IBot[] bots = new IBot[PLAYERS];
-        bots[0] = new Bot1();
-        bots[1] = new Bot2();
+        Bot[] bots = new Bot[PLAYERS];
+        bots[0] = new Bot1(0);
+        bots[1] = new Bot2(1);
 
         // Current game's rules
         IRules rules = new RuleTicTacToe();

@@ -1,9 +1,12 @@
 import java.util.Random;
 
-public class Bot1 implements IBot {
-    private char my_sign = 'X';
-    private char opponent = 'O';
-    private char[] action;
+public class Bot1 extends Bot {
+    private char mySign;
+
+    Bot1(int botId) {
+        super(botId);
+        mySign = (botId == 0) ? 'X' : 'O';
+    }
 
     private static int getRandom(int[] arr) {
         int rnd = new Random().nextInt(arr.length);
@@ -13,11 +16,11 @@ public class Bot1 implements IBot {
     @Override
     public IAction makeDecision(IGameState currentState) {
         int temp = isWinner(currentState, 'X');
-        action = matrixSmall(currentState);
-        IAction my_step = new IAction();
+        char[] action = matrixSmall(currentState);
+        ActionTicTacToe my_step = new ActionTicTacToe();
         if (temp != -1) {
             my_step.position = temp;
-            my_step.symbol = my_sign;
+            my_step.symbol = mySign;
 
             System.out.println("By the way, winner step! :)");
             return my_step;
@@ -25,68 +28,72 @@ public class Bot1 implements IBot {
         int[] empty = emptyIndices(action);
         int temp2 = getRandom(empty);
         my_step.position = temp;
-        my_step.symbol = my_sign;
+        my_step.symbol = mySign;
         return my_step;
     }
+
     private int isWinner(IGameState s2, char t){
-        String [] action = matrixSmall(s2);
-        if ((action[0].equals(action[1]) && action[1].equals(t) && action[2].equals("__")) ||
-                (action[4].equals(action[6]) && action[6].equals(t) && action[2].equals("__")) ||
-                (action[5].equals(action[8]) && action[8].equals(t) && action[2].equals("__")))
+        char[] action = matrixSmall(s2);
+
+        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == ('_')) ||
+                (action[4] == (action[6]) && action[6] == (t) && action[2] == ('_')) ||
+                (action[5] == (action[8]) && action[8] == (t) && action[2] == ('_')))
             return 2;
 
-        if ((action[0].equals(action[2]) && action[2].equals(t) && action[1].equals("__")) ||
-                (action[4].equals(action[7]) && action[7].equals(t) && action[1].equals("__")))
+        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == ('_')) ||
+                (action[4] == (action[7]) && action[7] == (t) && action[1] == ('_')))
             return 1;
 
-        if ((action[2].equals(action[1]) && action[2].equals(t) && action[0].equals("__")) ||
-                (action[4].equals(action[8]) && action[8].equals(t) && action[0].equals("__")) ||
-                (action[6].equals(action[3]) && action[3].equals(t) && action[0].equals("__")))
+        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == ('_')) ||
+                (action[4] == (action[8]) && action[8] == (t) && action[0] == ('_')) ||
+                (action[6] == (action[3]) && action[3] == (t) && action[0] == ('_')))
             return 0;
 
-        if ((action[3].equals(action[4]) && action[3].equals(t) && action[5].equals("__")) ||
-                (action[2].equals(action[8]) && action[8].equals(t) && action[5].equals("__")))
+        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == ('_')) ||
+                (action[2] == (action[8]) && action[8] == (t) && action[5] == ('_')))
             return 5;
-        if ((action[3].equals(action[5]) && action[5].equals(t) && action[4].equals("__")) ||
-                (action[2].equals(action[6]) && action[6].equals(t) && action[4].equals("__")) ||
-                (action[0].equals(action[8]) && action[8].equals(t) && action[4].equals("__")) ||
-                (action[1].equals(action[7]) && action[7].equals(t) && action[4].equals("__")))
+        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == ('_')) ||
+                (action[2] == (action[6]) && action[6] == (t) && action[4] == ('_')) ||
+                (action[0] == (action[8]) && action[8] == (t) && action[4] == ('_')) ||
+                (action[1] == (action[7]) && action[7] == (t) && action[4] == ('_')))
             return 4;
-        if ((action[4].equals(action[5]) && action[4].equals(t) && action[3].equals("__")) ||
-                (action[0].equals(action[6]) && action[6].equals(t) && action[3].equals("__")))
+        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == ('_')) ||
+                (action[0] == (action[6]) && action[6] == (t) && action[3] == ('_')))
             return 3;
 
-        if ((action[6].equals(action[7]) && action[7].equals(t) && action[8].equals("__")) ||
-                (action[0].equals(action[4]) && action[4].equals(t) && action[8].equals("__")) ||
-                (action[2].equals(action[5]) && action[5].equals(t) && action[8].equals("__")))
+        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == ('_')) ||
+                (action[0] == (action[4]) && action[4] == (t) && action[8] == ('_')) ||
+                (action[2] == (action[5]) && action[5] == (t) && action[8] == ('_')))
             return 8;
-        if ((action[6].equals(action[8]) && action[8].equals(t) && action[7].equals("__")) ||
-                (action[1].equals(action[4]) && action[1].equals(t) && action[7].equals("__")))
+        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == ('_')) ||
+                (action[1] == (action[4]) && action[1] == (t) && action[7] == ('_')))
             return 7;
-        if ((action[7].equals(action[8]) && action[8].equals(t) && action[6].equals("__")) ||
-                (action[2].equals(action[4]) && action[4].equals(t) && action[6].equals("__")) ||
-                (action[0].equals(action[3]) && action[3].equals(t) && action[6].equals("__"))
+        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == ('_')) ||
+                (action[2] == (action[4]) && action[4] == (t) && action[6] == ('_')) ||
+                (action[0] == (action[3]) && action[3] == (t) && action[6] == ('_'))
                 )
             return 6;
 
-
         return -1;
     }
+
     private int [] emptyIndices(char [] temp){
         int count = 0;
+        char opponent = 'O';
         for (int i = 0; i < 9; i ++){
-            if ((temp[i] != opponent) && temp[i] != (my_sign))
+            if ((temp[i] != opponent) && temp[i] != (mySign))
                 count = count  + 1;
         }
         int [] a = new int[count];
         count = 0;
         for (int i = 0; i < 9; i ++){
-            if ( temp[i] != (opponent) && temp[i]!= (my_sign))
+            if ( temp[i] != (opponent) && temp[i]!= (mySign))
                 a[count] = i;
             count ++;
         }
         return a;
     }
+
     private char [] matrixSmall(IGameState s2){
         char [] action = new char[9];
         int k = 0;
@@ -112,13 +119,13 @@ public class Bot1 implements IBot {
     private int [] emptyIndices(String [] temp){
         int count = 0;
         for (int i = 0; i < 9; i ++){
-            if (!temp[i].equals(opponent) && !temp[i].equals(my_sign))
+            if (!temp[i] == (opponent) && !temp[i] == (mySign))
                 count = count  + 1;
         }
         int [] a = new int[count];
         count = 0;
         for (int i = 0; i < 9; i ++){
-            if (!temp[i].equals(opponent) && !temp[i].equals(my_sign))
+            if (!temp[i] == (opponent) && !temp[i] == (mySign))
                 a[count] = i;
             count ++;
         }
@@ -132,14 +139,14 @@ public class Bot1 implements IBot {
     }
     private boolean winning(String [] board, String player) {
         if (
-                (board[0].equals(player) && board[1].equals(player) && board[2].equals(player)) ||
-                        (board[3].equals(player) && board[4].equals(player) && board[5].equals(player)) ||
-                        (board[6].equals(player) && board[7].equals(player) && board[8].equals(player)) ||
-                        (board[0].equals(player) && board[3].equals(player) && board[6].equals(player)) ||
-                        (board[1].equals(player) && board[4].equals(player) && board[7].equals(player)) ||
-                        (board[2].equals(player) && board[5].equals(player) && board[8].equals(player)) ||
-                        (board[0].equals(player) && board[4].equals(player) && board[8].equals(player)) ||
-                        (board[2].equals(player) && board[4].equals(player) && board[6].equals(player))
+                (board[0] == (player) && board[1] == (player) && board[2] == (player)) ||
+                        (board[3] == (player) && board[4] == (player) && board[5] == (player)) ||
+                        (board[6] == (player) && board[7] == (player) && board[8] == (player)) ||
+                        (board[0] == (player) && board[3] == (player) && board[6] == (player)) ||
+                        (board[1] == (player) && board[4] == (player) && board[7] == (player)) ||
+                        (board[2] == (player) && board[5] == (player) && board[8] == (player)) ||
+                        (board[0] == (player) && board[4] == (player) && board[8] == (player)) ||
+                        (board[2] == (player) && board[4] == (player) && board[6] == (player))
                 ) {
             return true;
         } else {
@@ -162,7 +169,7 @@ public class Bot1 implements IBot {
         temp = 0;
         String [] action = matrixSmall(s2);
         for (int i = 0; i < 9; i ++){
-            if (!action[i].equals("__")) {
+            if (!action[i] == ('_')) {
                 count = count + 1;
                 temp = -1;
             }
@@ -177,38 +184,38 @@ public class Bot1 implements IBot {
                 return 6;
             return 8;
         }
-        if (count == 1 && !action[0].equals("__") )
+        if (count == 1 && !action[0] == ('_') )
             return 8;
-        if (count == 1 && !action[2].equals("__") )
+        if (count == 1 && !action[2] == ('_') )
             return 6;
-        if (count == 1 && !action[8].equals("__") )
+        if (count == 1 && !action[8] == ('_') )
             return 0;
-        if (count == 1 && !action[6].equals("__") )
+        if (count == 1 && !action[6] == ('_') )
             return 2;
 
 
-        if (count == 2 && !action[4].equals("__") && action[0].equals("Ka"))
+        if (count == 2 && !action[4] == ('_') && action[0] == ("Ka"))
             return 8;
-        if (count == 2 && !action[4].equals("__") && action[2].equals("Ka"))
+        if (count == 2 && !action[4] == ('_') && action[2] == ("Ka"))
             return 6;
-        if (count == 2 && !action[4].equals("__") && action[6].equals("Ka"))
+        if (count == 2 && !action[4] == ('_') && action[6] == ("Ka"))
             return 2;
-        if (count == 2 && !action[4].equals("__") && action[8].equals("Ka"))
+        if (count == 2 && !action[4] == ('_') && action[8] == ("Ka"))
             return 0;
         String [][] tempArr = s2.GameField();
 
 
-        if (count == 4 && action[4].equals(opponent) && action[0].equals("Ka"))
+        if (count == 4 && action[4] == (opponent) && action[0] == ("Ka"))
             return 8;
-        if (count == 4 && action[4].equals(opponent) && action[2].equals("Ka"))
+        if (count == 4 && action[4] == (opponent) && action[2] == ("Ka"))
             return 6;
-        if (count == 4 && action[4].equals(opponent) && action[6].equals("Ka"))
+        if (count == 4 && action[4] == (opponent) && action[6] == ("Ka"))
             return 2;
-        if (count == 4 && action[4].equals(opponent) && action[8].equals("Ka"))
+        if (count == 4 && action[4] == (opponent) && action[8] == ("Ka"))
             return 0;
 
         for (int i = 0; i < 9 ; i ++) {
-            if (action[i].equals("__"))
+            if (action[i] == ('_'))
                 return i;
         }
         return -1;
@@ -216,42 +223,42 @@ public class Bot1 implements IBot {
 
     private int isWinner(IGameState s2, String t){
         String [] action = matrixSmall(s2);
-        if ((action[0].equals(action[1]) && action[1].equals(t) && action[2].equals("__")) ||
-        (action[4].equals(action[6]) && action[6].equals(t) && action[2].equals("__")) ||
-                (action[5].equals(action[8]) && action[8].equals(t) && action[2].equals("__")))
+        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == ('_')) ||
+        (action[4] == (action[6]) && action[6] == (t) && action[2] == ('_')) ||
+                (action[5] == (action[8]) && action[8] == (t) && action[2] == ('_')))
             return 2;
 
-        if ((action[0].equals(action[2]) && action[2].equals(t) && action[1].equals("__")) ||
-        (action[4].equals(action[7]) && action[7].equals(t) && action[1].equals("__")))
+        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == ('_')) ||
+        (action[4] == (action[7]) && action[7] == (t) && action[1] == ('_')))
             return 1;
 
-        if ((action[2].equals(action[1]) && action[2].equals(t) && action[0].equals("__")) ||
-        (action[4].equals(action[8]) && action[8].equals(t) && action[0].equals("__")) ||
-                (action[6].equals(action[3]) && action[3].equals(t) && action[0].equals("__")))
+        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == ('_')) ||
+        (action[4] == (action[8]) && action[8] == (t) && action[0] == ('_')) ||
+                (action[6] == (action[3]) && action[3] == (t) && action[0] == ('_')))
             return 0;
 
-        if ((action[3].equals(action[4]) && action[3].equals(t) && action[5].equals("__")) ||
-        (action[2].equals(action[8]) && action[8].equals(t) && action[5].equals("__")))
+        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == ('_')) ||
+        (action[2] == (action[8]) && action[8] == (t) && action[5] == ('_')))
             return 5;
-        if ((action[3].equals(action[5]) && action[5].equals(t) && action[4].equals("__")) ||
-        (action[2].equals(action[6]) && action[6].equals(t) && action[4].equals("__")) ||
-                (action[0].equals(action[8]) && action[8].equals(t) && action[4].equals("__")) ||
-                (action[1].equals(action[7]) && action[7].equals(t) && action[4].equals("__")))
+        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == ('_')) ||
+        (action[2] == (action[6]) && action[6] == (t) && action[4] == ('_')) ||
+                (action[0] == (action[8]) && action[8] == (t) && action[4] == ('_')) ||
+                (action[1] == (action[7]) && action[7] == (t) && action[4] == ('_')))
             return 4;
-        if ((action[4].equals(action[5]) && action[4].equals(t) && action[3].equals("__")) ||
-        (action[0].equals(action[6]) && action[6].equals(t) && action[3].equals("__")))
+        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == ('_')) ||
+        (action[0] == (action[6]) && action[6] == (t) && action[3] == ('_')))
             return 3;
 
-        if ((action[6].equals(action[7]) && action[7].equals(t) && action[8].equals("__")) ||
-        (action[0].equals(action[4]) && action[4].equals(t) && action[8].equals("__")) ||
-                (action[2].equals(action[5]) && action[5].equals(t) && action[8].equals("__")))
+        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == ('_')) ||
+        (action[0] == (action[4]) && action[4] == (t) && action[8] == ('_')) ||
+                (action[2] == (action[5]) && action[5] == (t) && action[8] == ('_')))
             return 8;
-        if ((action[6].equals(action[8]) && action[8].equals(t) && action[7].equals("__")) ||
-        (action[1].equals(action[4]) && action[1].equals(t) && action[7].equals("__")))
+        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == ('_')) ||
+        (action[1] == (action[4]) && action[1] == (t) && action[7] == ('_')))
             return 7;
-        if ((action[7].equals(action[8]) && action[8].equals(t) && action[6].equals("__")) ||
-        (action[2].equals(action[4]) && action[4].equals(t) && action[6].equals("__")) ||
-                (action[0].equals(action[3]) && action[3].equals(t) && action[6].equals("__"))
+        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == ('_')) ||
+        (action[2] == (action[4]) && action[4] == (t) && action[6] == ('_')) ||
+                (action[0] == (action[3]) && action[3] == (t) && action[6] == ('_'))
                 )
             return 6;
 
