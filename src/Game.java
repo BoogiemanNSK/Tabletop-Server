@@ -7,7 +7,7 @@ class Game {
     private int timeout;
     private int botsLost;
     private boolean[] inGame;
-    private IBot[] bots;
+    private Bot[] bots;
     private IRules rules;
     private IGameState state;
 
@@ -15,7 +15,7 @@ class Game {
     Game(
             int numberOfPlayers,
             int allowedTimeout,
-            IBot[] arrayOfBots,
+            Bot[] arrayOfBots,
             IRules gameRules,
             IGameState gameState
     ) {

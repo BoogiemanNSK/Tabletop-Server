@@ -3,9 +3,9 @@ import java.util.concurrent.Callable;
 public class Decision implements Callable<IAction> {
 
     private IGameState knownState;
-    private IBot executor;
+    private Bot executor;
 
-    Decision(IBot currentBot, IGameState currentState) {
+    Decision(Bot currentBot, IGameState currentState) {
         executor = currentBot;
         knownState = currentState;
     }
