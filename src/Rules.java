@@ -12,9 +12,11 @@ public class Rules implements IRules {
      * @return
      */
     @Override
-    public boolean validate(GameStateTicTacToe game, ActionTicTacToe x){
-        int action = x.position;
-        char board[][] = game.GameField();
+    public boolean validate(IGameState game, IAction x){
+        GameStateTicTacToe y = (GameStateTicTacToe) game;
+        ActionTicTacToe u = (IAction) x;
+        int action = u.position;
+        char board[][] = y.GameField();
         if (action<9 & action >=0){
             if (board[action/3][action%3] == '_')
                 return true;
@@ -25,8 +27,9 @@ public class Rules implements IRules {
             return false;
 
     }
-    public String checkResult(GameStateTicTacToe game){
-        char board[][] = game.GameField();
+    public String checkResult(IGameState game){
+        GameStateTicTacToe y = (GameStateTicTacToe) game;
+        char board[][] = y.GameField();
         for (int i = 0; i < 3; i++) {
             if (board[i][0] == board[i][1] & board[i][1] == board[0][2])
                 return "won: " + board[i][0];
@@ -49,9 +52,11 @@ public class Rules implements IRules {
         }
         return "draw";
     }
-    public void update(GameStateTicTacToe game, ActionTicTacToe action){
-        char[][] board = game.GameField();
-        int position = action.position;
+    public void update(IGameState game, IAction x){
+        GameStateTicTacToe y = (GameStateTicTacToe) game;
+        ActionTicTacToe u = (IAction) x;
+        char[][] board = y.GameField();
+        int position = u.position;
         board[position/3][position%3] = action.symbol;
 
     }
