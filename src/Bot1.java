@@ -2,11 +2,53 @@ import java.util.Random;
 
 public class Bot1 extends Bot {
     private char mySign;
+    private char opponentSign;
     /*Bot constructor
      */
     Bot1(int botId) {
         super(botId);
         mySign = Rules.PLAYERS_SYMBOLS[botId];
+        for(int i = 0; i < Rules.PLAYERS_SYMBOLS.length; i ++){
+            if (Rules.PLAYERS_SYMBOLS[i] != mySign)
+                opponentSign = Rules.PLAYERS_SYMBOLS[i];
+        }
+    }
+
+    /*
+    main method for this class
+     */
+    @Override
+    public IAction makeDecision(IGameState currentState) {
+        ActionTicTacToe my_step = new ActionTicTacToe();
+        my_step.symbol = mySign;
+
+        char[] action = matrixSmall(currentState);
+        int temp;
+        temp = isWinner(action,opponentSign);   // firstly check if opponent has the winner field and try to remove it;
+
+        if (temp != - 1){
+            my_step.position = temp;
+            return my_step;
+
+        }
+
+
+        temp = isWinner(action,mySign); //2ly check if I have the winner field and put my character at that place
+
+        if (temp != - 1){
+            my_step.position = temp;
+            return my_step;
+        }
+        else {                                              // if no winners just do random
+            temp = getRandom(emptyIndices(action));
+            my_step.position = temp;
+            return my_step;
+        }
+
+        
+
+
+
     }
     /*
     as input takes one dim. array and in random try to guess to which place put new symbol and return empty field choosing in
@@ -30,29 +72,7 @@ public class Bot1 extends Bot {
         return  action;
     }
 
-    /*
-    main method for this class
-     */
-    @Override
-    public IAction makeDecision(IGameState currentState) {
 
-        char[] action = matrixSmall(currentState);
-        int temp = isWinner(action, mySign);
-        ActionTicTacToe my_step = new ActionTicTacToe();
-
-        if (temp != - 1){
-            my_step.position = temp;
-            my_step.symbol = mySign;
-
-        }
-        else {
-            temp = getRandom(emptyIndices(action));
-            my_step.position = temp;
-            my_step.symbol = mySign;
-        }
-
-        return my_step;
-    }
 
     /*
     method which checks which next step lead to the win of that game
