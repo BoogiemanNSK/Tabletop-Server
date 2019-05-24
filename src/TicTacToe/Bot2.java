@@ -1,14 +1,17 @@
+package TicTacToe;
+
+import Interfaces.*;
 import java.util.Random;
 
-class Bot2 extends Bot {
+public class Bot2 extends Bot {
 
     private char mySign;
     private Random random;
 
-    Bot2(int botId) {
+    public Bot2(int botId) {
         super(botId);
         random = new Random();
-        mySign = Rules.PLAYERS_SYMBOLS[botId];
+        mySign = RulesTicTacToe.PLAYERS_SYMBOLS[botId];
     }
 
     @Override
@@ -23,7 +26,7 @@ class Bot2 extends Bot {
                 k++;
             }
 
-        while (lineState[position] != Rules.EMPTY_SPACE_SYMBOL) {
+        while (lineState[position] != RulesTicTacToe.EMPTY_SPACE_SYMBOL) {
             position = random.nextInt(8);
         }
 

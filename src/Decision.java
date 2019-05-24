@@ -1,3 +1,7 @@
+import Interfaces.Bot;
+import Interfaces.IAction;
+import Interfaces.IGameState;
+
 import java.util.concurrent.Callable;
 
 public class Decision implements Callable<IAction> {

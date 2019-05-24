@@ -1,3 +1,6 @@
+import Interfaces.*;
+import Utils.GameResults;
+
 import java.util.concurrent.*;
 
 class Game {
@@ -56,7 +59,7 @@ class Game {
                 continue;
             }
 
-            System.out.println("Bot #" + turn + "'s turn now.");
+            System.out.println("Bot #" + (turn + 1) + "'s turn now.");
 
             // Start new thread with method of bot which turn is now.
             Decision d = new Decision(bots[turn], state);
@@ -71,18 +74,18 @@ class Game {
                     // Update game state with bot's action
                     rules.update(state, decision);
 
-                    // Check for finishing state
-                    String result = rules.checkResult(state);
-                    if (!result.equals(Rules.GAME_NOT_OVER)) {
-                        gameFinished = true;
-                        System.out.println(result);
-                        continue;
-                    }
-
                     // Print Game state
                     state.showField();
+
+                    // Check for finishing state
+                    GameResults result = rules.checkResult(state);
+                    if (result != GameResults.GAME_NOT_OVER) {
+                        gameFinished = true;
+                        printResult(result, turn);
+                        continue;
+                    }
                 } else {
-                    System.out.println("Bot #" + turn + " made invalid action. It has lost.");
+                    System.out.println("Bot #" + (turn + 1) + " made invalid action. It has lost.");
                     inGame[turn] = false;
                 }
             } catch (InterruptedException | ExecutionException e) {
@@ -91,7 +94,7 @@ class Game {
                 inGame[turn] = false;
             } catch (TimeoutException te) {
                 // No trial was made in TIMEOUT seconds
-                System.out.println("Bot #" + turn + " was timed out. It has lost.");
+                System.out.println("Bot #" + (turn + 1) + " was timed out. It has lost.");
                 inGame[turn] = false;
             }
 
@@ -99,6 +102,21 @@ class Game {
             turn = (turn + 1) % players;
             System.out.println();
         }
+    }
+
+    // Prints game result
+    private void printResult(GameResults resEnum, int turn) {
+        System.out.println();
+        switch (resEnum) {
+            case FIRST_WIN:
+            case SECOND_WIN:
+                System.out.print("Game finished. Bot #" + (turn + 1) + " has won!");
+                break;
+            case HALF_WIN:
+                System.out.print("Game finished with Draw.");
+                break;
+        }
+        System.out.println(" [" + resEnum.getCode() + "]");
     }
 
 }
