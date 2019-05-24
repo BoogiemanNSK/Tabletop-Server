@@ -5,7 +5,7 @@ public class Bot1 extends Bot {
 
     Bot1(int botId) {
         super(botId);
-        mySign = (botId == 0) ? 'X' : 'O';
+        mySign = Rules.PLAYERS_SYMBOLS[botId];
     }
 
     private static int getRandom(int[] arr) {
@@ -35,42 +35,42 @@ public class Bot1 extends Bot {
     private int isWinner(IGameState s2, char t){
         char[] action = matrixSmall(s2);
 
-        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == ('_')) ||
-                (action[4] == (action[6]) && action[6] == (t) && action[2] == ('_')) ||
-                (action[5] == (action[8]) && action[8] == (t) && action[2] == ('_')))
+        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[4] == (action[6]) && action[6] == (t) && action[2] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[5] == (action[8]) && action[8] == (t) && action[2] == Rules.EMPTY_SPACE_SYMBOL))
             return 2;
 
-        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == ('_')) ||
-                (action[4] == (action[7]) && action[7] == (t) && action[1] == ('_')))
+        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[4] == (action[7]) && action[7] == (t) && action[1] == Rules.EMPTY_SPACE_SYMBOL))
             return 1;
 
-        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == ('_')) ||
-                (action[4] == (action[8]) && action[8] == (t) && action[0] == ('_')) ||
-                (action[6] == (action[3]) && action[3] == (t) && action[0] == ('_')))
+        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[4] == (action[8]) && action[8] == (t) && action[0] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[6] == (action[3]) && action[3] == (t) && action[0] == Rules.EMPTY_SPACE_SYMBOL))
             return 0;
 
-        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == ('_')) ||
-                (action[2] == (action[8]) && action[8] == (t) && action[5] == ('_')))
+        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == (action[8]) && action[8] == (t) && action[5] == Rules.EMPTY_SPACE_SYMBOL))
             return 5;
-        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == ('_')) ||
-                (action[2] == (action[6]) && action[6] == (t) && action[4] == ('_')) ||
-                (action[0] == (action[8]) && action[8] == (t) && action[4] == ('_')) ||
-                (action[1] == (action[7]) && action[7] == (t) && action[4] == ('_')))
+        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == (action[6]) && action[6] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == (action[8]) && action[8] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[1] == (action[7]) && action[7] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL))
             return 4;
-        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == ('_')) ||
-                (action[0] == (action[6]) && action[6] == (t) && action[3] == ('_')))
+        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == (action[6]) && action[6] == (t) && action[3] == Rules.EMPTY_SPACE_SYMBOL))
             return 3;
 
-        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == ('_')) ||
-                (action[0] == (action[4]) && action[4] == (t) && action[8] == ('_')) ||
-                (action[2] == (action[5]) && action[5] == (t) && action[8] == ('_')))
+        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == (action[4]) && action[4] == (t) && action[8] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == (action[5]) && action[5] == (t) && action[8] == Rules.EMPTY_SPACE_SYMBOL))
             return 8;
-        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == ('_')) ||
-                (action[1] == (action[4]) && action[1] == (t) && action[7] == ('_')))
+        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[1] == (action[4]) && action[1] == (t) && action[7] == Rules.EMPTY_SPACE_SYMBOL))
             return 7;
-        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == ('_')) ||
-                (action[2] == (action[4]) && action[4] == (t) && action[6] == ('_')) ||
-                (action[0] == (action[3]) && action[3] == (t) && action[6] == ('_'))
+        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == (action[4]) && action[4] == (t) && action[6] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == (action[3]) && action[3] == (t) && action[6] == Rules.EMPTY_SPACE_SYMBOL)
                 )
             return 6;
 
@@ -169,7 +169,7 @@ public class Bot1 extends Bot {
         temp = 0;
         String [] action = matrixSmall(s2);
         for (int i = 0; i < 9; i ++){
-            if (!action[i] == ('_')) {
+            if (!action[i] == Rules.EMPTY_SPACE_SYMBOL) {
                 count = count + 1;
                 temp = -1;
             }
@@ -184,23 +184,23 @@ public class Bot1 extends Bot {
                 return 6;
             return 8;
         }
-        if (count == 1 && !action[0] == ('_') )
+        if (count == 1 && !action[0] == Rules.EMPTY_SPACE_SYMBOL )
             return 8;
-        if (count == 1 && !action[2] == ('_') )
+        if (count == 1 && !action[2] == Rules.EMPTY_SPACE_SYMBOL )
             return 6;
-        if (count == 1 && !action[8] == ('_') )
+        if (count == 1 && !action[8] == Rules.EMPTY_SPACE_SYMBOL )
             return 0;
-        if (count == 1 && !action[6] == ('_') )
+        if (count == 1 && !action[6] == Rules.EMPTY_SPACE_SYMBOL )
             return 2;
 
 
-        if (count == 2 && !action[4] == ('_') && action[0] == ("Ka"))
+        if (count == 2 && !action[4] == Rules.EMPTY_SPACE_SYMBOL && action[0] == ("Ka"))
             return 8;
-        if (count == 2 && !action[4] == ('_') && action[2] == ("Ka"))
+        if (count == 2 && !action[4] == Rules.EMPTY_SPACE_SYMBOL && action[2] == ("Ka"))
             return 6;
-        if (count == 2 && !action[4] == ('_') && action[6] == ("Ka"))
+        if (count == 2 && !action[4] == Rules.EMPTY_SPACE_SYMBOL && action[6] == ("Ka"))
             return 2;
-        if (count == 2 && !action[4] == ('_') && action[8] == ("Ka"))
+        if (count == 2 && !action[4] == Rules.EMPTY_SPACE_SYMBOL && action[8] == ("Ka"))
             return 0;
         String [][] tempArr = s2.GameField();
 
@@ -215,7 +215,7 @@ public class Bot1 extends Bot {
             return 0;
 
         for (int i = 0; i < 9 ; i ++) {
-            if (action[i] == ('_'))
+            if (action[i] == Rules.EMPTY_SPACE_SYMBOL)
                 return i;
         }
         return -1;
@@ -223,42 +223,42 @@ public class Bot1 extends Bot {
 
     private int isWinner(IGameState s2, String t){
         String [] action = matrixSmall(s2);
-        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == ('_')) ||
-        (action[4] == (action[6]) && action[6] == (t) && action[2] == ('_')) ||
-                (action[5] == (action[8]) && action[8] == (t) && action[2] == ('_')))
+        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[4] == (action[6]) && action[6] == (t) && action[2] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[5] == (action[8]) && action[8] == (t) && action[2] == Rules.EMPTY_SPACE_SYMBOL))
             return 2;
 
-        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == ('_')) ||
-        (action[4] == (action[7]) && action[7] == (t) && action[1] == ('_')))
+        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[4] == (action[7]) && action[7] == (t) && action[1] == Rules.EMPTY_SPACE_SYMBOL))
             return 1;
 
-        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == ('_')) ||
-        (action[4] == (action[8]) && action[8] == (t) && action[0] == ('_')) ||
-                (action[6] == (action[3]) && action[3] == (t) && action[0] == ('_')))
+        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[4] == (action[8]) && action[8] == (t) && action[0] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[6] == (action[3]) && action[3] == (t) && action[0] == Rules.EMPTY_SPACE_SYMBOL))
             return 0;
 
-        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == ('_')) ||
-        (action[2] == (action[8]) && action[8] == (t) && action[5] == ('_')))
+        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[2] == (action[8]) && action[8] == (t) && action[5] == Rules.EMPTY_SPACE_SYMBOL))
             return 5;
-        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == ('_')) ||
-        (action[2] == (action[6]) && action[6] == (t) && action[4] == ('_')) ||
-                (action[0] == (action[8]) && action[8] == (t) && action[4] == ('_')) ||
-                (action[1] == (action[7]) && action[7] == (t) && action[4] == ('_')))
+        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[2] == (action[6]) && action[6] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == (action[8]) && action[8] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[1] == (action[7]) && action[7] == (t) && action[4] == Rules.EMPTY_SPACE_SYMBOL))
             return 4;
-        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == ('_')) ||
-        (action[0] == (action[6]) && action[6] == (t) && action[3] == ('_')))
+        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[0] == (action[6]) && action[6] == (t) && action[3] == Rules.EMPTY_SPACE_SYMBOL))
             return 3;
 
-        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == ('_')) ||
-        (action[0] == (action[4]) && action[4] == (t) && action[8] == ('_')) ||
-                (action[2] == (action[5]) && action[5] == (t) && action[8] == ('_')))
+        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[0] == (action[4]) && action[4] == (t) && action[8] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == (action[5]) && action[5] == (t) && action[8] == Rules.EMPTY_SPACE_SYMBOL))
             return 8;
-        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == ('_')) ||
-        (action[1] == (action[4]) && action[1] == (t) && action[7] == ('_')))
+        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[1] == (action[4]) && action[1] == (t) && action[7] == Rules.EMPTY_SPACE_SYMBOL))
             return 7;
-        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == ('_')) ||
-        (action[2] == (action[4]) && action[4] == (t) && action[6] == ('_')) ||
-                (action[0] == (action[3]) && action[3] == (t) && action[6] == ('_'))
+        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == Rules.EMPTY_SPACE_SYMBOL) ||
+        (action[2] == (action[4]) && action[4] == (t) && action[6] == Rules.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == (action[3]) && action[3] == (t) && action[6] == Rules.EMPTY_SPACE_SYMBOL)
                 )
             return 6;
 

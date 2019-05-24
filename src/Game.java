@@ -48,9 +48,11 @@ class Game {
                 } else {
                     botsLost++;
                     if (botsLost == players) {
+                        System.out.println("All bots are lost.");
                         gameFinished = true;
                     }
                 }
+                turn = (turn + 1) % players;
                 continue;
             }
 
@@ -64,20 +66,33 @@ class Game {
                 // Wait for bot's action some fixed amount of time
                 IAction decision = threadProcess.get(timeout, TimeUnit.SECONDS);
 
-                // Validate bot's action and check for finishing state
+                // Validate bot's action
                 if (rules.validate(state, decision)) {
-                    if (rules.checkResult(state)) {
+                    // Update game state with bot's action
+                    rules.update(state, decision);
+
+                    // Check for finishing state
+                    String result = rules.checkResult(state);
+                    if (!result.equals(Rules.GAME_NOT_OVER)) {
                         gameFinished = true;
+                        System.out.println(result);
+                        continue;
                     }
+
+                    // Print Game state
+                    state.showField();
                 } else {
                     System.out.println("Bot #" + turn + " made invalid action. It has lost.");
+                    inGame[turn] = false;
                 }
             } catch (InterruptedException | ExecutionException e) {
                 // Internal thread exceptions
                 e.printStackTrace();
+                inGame[turn] = false;
             } catch (TimeoutException te) {
                 // No trial was made in TIMEOUT seconds
                 System.out.println("Bot #" + turn + " was timed out. It has lost.");
+                inGame[turn] = false;
             }
 
             // Give turn to the next bot

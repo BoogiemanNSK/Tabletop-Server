@@ -3,7 +3,7 @@ public class Main {
     // Number of players in game
     private static final int PLAYERS = 2;
     // Allowed time for threads (in seconds)
-    private static final int TIMEOUT = 1;
+    private static final int TIMEOUT = 5;
 
     public static void main(String[] args) {
         // Fill array of bots with existing bots
@@ -12,7 +12,7 @@ public class Main {
         bots[1] = new Bot2(1);
 
         // Current game's rules
-        IRules rules = new RuleTicTacToe();
+        IRules rules = new Rules();
 
         // Game State representation for current game
         IGameState gameState = new GameStateTicTacToe();

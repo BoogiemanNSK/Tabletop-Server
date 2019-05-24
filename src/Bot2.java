@@ -8,7 +8,7 @@ class Bot2 extends Bot {
     Bot2(int botId) {
         super(botId);
         random = new Random();
-        mySign = (botId == 0) ? 'X' : 'O';
+        mySign = Rules.PLAYERS_SYMBOLS[botId];
     }
 
     @Override
@@ -23,7 +23,7 @@ class Bot2 extends Bot {
                 k++;
             }
 
-        while (lineState[position] != ' ') {
+        while (lineState[position] != Rules.EMPTY_SPACE_SYMBOL) {
             position = random.nextInt(8);
         }
 

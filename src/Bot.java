@@ -1,6 +1,6 @@
-public abstract class Bot {
+abstract class Bot {
 
-    private int id;
+    int id;
 
     Bot(int botId) {
         id = botId;
