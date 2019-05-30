@@ -10,7 +10,7 @@ public class RulesTicTacToe implements IRules {
 
     // Checks correctness of the action performed by bot
     @Override
-    public boolean validate(IGameState game, IAction x){
+    public boolean validate(IGameState game, IAction x) {
         GameStateTicTacToe y = (GameStateTicTacToe) game;
         ActionTicTacToe u = (ActionTicTacToe) x;
 
@@ -25,7 +25,7 @@ public class RulesTicTacToe implements IRules {
     }
 
     // Checks current state of the game and returns result string
-    public GameResults checkResult(IGameState game){
+    public GameResults checkResult(IGameState game) {
         GameStateTicTacToe y = (GameStateTicTacToe) game;
         char[][] board = y.GameField();
 
@@ -72,7 +72,7 @@ public class RulesTicTacToe implements IRules {
     }
 
     // Updates game board according to specified action
-    public void update(IGameState game, IAction x){
+    public void update(IGameState game, IAction x) {
         GameStateTicTacToe y = (GameStateTicTacToe) game;
         ActionTicTacToe u = (ActionTicTacToe) x;
 

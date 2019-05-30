@@ -1,36 +1,71 @@
 package Checkers;
 
+import Interfaces.Bot;
 import Interfaces.IGameState;
+import java.util.HashMap;
 
 public class GameStateCheckers implements IGameState {
 
-    private char [][] gameField;
+    //  Initial Game State of Checkers
+    //    ☺  ☺  ☺  ☺
+    //  ☺  ☺  ☺  ☺      PLAYER 0
+    //    ☺  ☺  ☺  ☺
+    //
+    //
+    //  ☻  ☻  ☻  ☻
+    //    ☻  ☻  ☻  ☻    PLAYER 1
+    //  ☻  ☻  ☻  ☻
 
-    // Here r is standard red checker, b is standard black checker
-    // R would be red queen and B - black queen
-    // Other fields are underline symbol (empty)
-    public GameStateCheckers(){
-        this.gameField = new char[8][8];
+    HashMap<Position, Token> gameField;
+    final static int MAX_ROW = 7;
+    final static int MAX_COLUMN = 7;
 
-        this.gameField[0] = new char[]{'_', 'r', '_', 'r', '_', 'r', '_', 'r'};
-        this.gameField[1] = new char[]{'r', '_', 'r', '_', 'r', '_', 'r', '_'};
-        this.gameField[2] = new char[]{'_', 'r', '_', 'r', '_', 'r', '_', 'r'};
-        this.gameField[3] = new char[]{'_', '_', '_', '_', '_', '_', '_', '_'};
-        this.gameField[4] = new char[]{'_', '_', '_', '_', '_', '_', '_', '_'};
-        this.gameField[5] = new char[]{'b', '_', 'b', '_', 'b', '_', 'b', '_'};
-        this.gameField[6] = new char[]{'_', 'b', '_', 'b', '_', 'b', '_', 'b'};
-        this.gameField[7] = new char[]{'b', '_', 'b', '_', 'b', '_', 'b', '_'};
+    class Token {
+        Bot player;
+        Position position;
+        boolean isCapital;
+
+        Token(Bot player, Position position) {
+            this.player = player;
+            this.position = position;
+            isCapital = false;
+        }
     }
 
-    public char[][] GameField(){
-        return gameField;
+    public GameStateCheckers(Bot player1, Bot player2) {
+        gameField = new HashMap<>();
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 4; j++) {
+                Position p1 = new Position(i, (1 - (i % 2) + (j * 2)));
+                Position p2 = new Position(MAX_ROW - i, ((i % 2) + (j * 2)));
+
+                gameField.put(p1, new Token(player1, p1));
+                gameField.put(p2, new Token(player2, p2));
+            }
+        }
     }
 
     @Override
     public void showField() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++)
-                System.out.print(gameField[i][j] + " ");
+        Bot temp = null;
+        char c;
+
+        for (int i = 0; i <= MAX_ROW; i++) {
+            for (int j = 0; j <= MAX_COLUMN; j++) {
+                Token cell = gameField.get(new Position(i, j));
+                if (cell == null) {
+                    c = '_';
+                } else {
+                    if (temp == null) { temp = cell.player; }
+                    if (cell.player == temp) {
+                        c = cell.isCapital ? 'W' : 'w';
+                    } else {
+                        c = cell.isCapital ? 'B' : 'b';
+                    }
+                }
+                System.out.println(c);
+            }
             System.out.println();
         }
     }
