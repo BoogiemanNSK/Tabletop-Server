@@ -17,12 +17,13 @@ public class Bot2 extends Bot {
     @Override
     public IAction makeDecision(final IGameState currentState) {
         int position = random.nextInt(8);
+        GameStateTicTacToe gameState = (GameStateTicTacToe) currentState;
 
         Character[] lineState = new Character[9];
         int k = 0;
         for (int i = 0; i < 3; i ++)
             for ( int j = 0; j < 3; j++) {
-                lineState[k] = currentState.GameField()[i][j];
+                lineState[k] = gameState.GameField()[i][j];
                 k++;
             }
 

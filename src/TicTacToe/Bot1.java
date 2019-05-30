@@ -25,32 +25,32 @@ public class Bot1 extends Bot {
      */
     @Override
     public IAction makeDecision(IGameState currentState) {
-        ActionTicTacToe my_step = new ActionTicTacToe();
-        my_step.symbol = mySign;
+        ActionTicTacToe myStep = new ActionTicTacToe();
+        GameStateTicTacToe gameState = (GameStateTicTacToe)currentState;
+        myStep.symbol = mySign;
 
-        char[] action = matrixSmall(currentState);
+        char[] action = matrixSmall(gameState);
         int[] emptyFields = emptyIndices(action);
         int temp;
 
         // Firstly check if opponent has the winner field and try to remove it
         temp = isWinner(action, opponentSign);
         if (temp != -1) {
-            my_step.position = temp;
-            return my_step;
-
+            myStep.position = temp;
+            return myStep;
         }
 
         // Check if I have the winner field and put my character at that place
         temp = isWinner(action, mySign);
         if (temp != -1) {
-            my_step.position = temp;
-            return my_step;
+            myStep.position = temp;
+            return myStep;
         }
         // If no winners just try to find winner strategy steps
         else {
             temp = winnerStrategyCheck(emptyFields, action);
-            my_step.position = temp;
-            return my_step;
+            myStep.position = temp;
+            return myStep;
         }
 
     }
@@ -163,14 +163,14 @@ public class Bot1 extends Bot {
      return empty field choosing in random
      */
     private static int getRandom(int[] arr) {
-        int rnd = new Random().nextInt(arr.length);
+        int rnd = new Random().nextInt(arr.length - 1);
         return arr[rnd];
     }
 
     /*
     Method which take as an input Interfaces.IGameState and return one dimension array of game field
      */
-    private char[] matrixSmall(IGameState s2) {
+    private char[] matrixSmall(GameStateTicTacToe s2) {
         char[] action = new char[9];
         int temp = 0;
         for (int i = 0; i < 3; i++)
@@ -186,47 +186,46 @@ public class Bot1 extends Bot {
      */
     private int isWinner(char[] action, char t) {
 
-        if ((action[0] == (action[1]) && action[1] == (t) && action[2] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[4] == (action[6]) && action[6] == (t) && action[2] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[5] == (action[8]) && action[8] == (t) && action[2] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[0] == action[1] && action[1] == t && action[2] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[4] == action[6] && action[6] == t && action[2] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[5] == action[8] && action[8] == t && action[2] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 2;
 
-        if ((action[0] == (action[2]) && action[2] == (t) && action[1] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[4] == (action[7]) && action[7] == (t) && action[1] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[0] == action[2] && action[2] == t && action[1] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[4] == action[7] && action[7] == t && action[1] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 1;
 
-        if ((action[2] == (action[1]) && action[2] == (t) && action[0] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[4] == (action[8]) && action[8] == (t) && action[0] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[6] == (action[3]) && action[3] == (t) && action[0] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[2] == action[1] && action[2] == t && action[0] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[4] == action[8] && action[8] == t && action[0] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[6] == action[3] && action[3] == t && action[0] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 0;
 
-        if ((action[3] == (action[4]) && action[3] == (t) && action[5] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[2] == (action[8]) && action[8] == (t) && action[5] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[3] == action[4] && action[3] == t && action[5] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == action[8] && action[8] == t && action[5] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 5;
 
-        if ((action[3] == (action[5]) && action[5] == (t) && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[2] == (action[6]) && action[6] == (t) && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[0] == (action[8]) && action[8] == (t) && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[1] == (action[7]) && action[7] == (t) && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[3] == action[5] && action[5] == t && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == action[6] && action[6] == t && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == action[8] && action[8] == t && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[1] == action[7] && action[7] == t && action[4] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 4;
 
-        if ((action[4] == (action[5]) && action[4] == (t) && action[3] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[0] == (action[6]) && action[6] == (t) && action[3] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[4] == action[5] && action[4] == t && action[3] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == action[6] && action[6] == t && action[3] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 3;
 
-        if ((action[6] == (action[7]) && action[7] == (t) && action[8] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[0] == (action[4]) && action[4] == (t) && action[8] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[2] == (action[5]) && action[5] == (t) && action[8] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[6] == action[7] && action[7] == t && action[8] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == action[4] && action[4] == t && action[8] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == action[5] && action[5] == t && action[8] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 8;
 
-        if ((action[6] == (action[8]) && action[8] == (t) && action[7] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[1] == (action[4]) && action[1] == (t) && action[7] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
+        if ((action[6] == action[8] && action[8] == t && action[7] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[1] == action[4] && action[1] == t && action[7] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 7;
 
-        if ((action[7] == (action[8]) && action[8] == (t) && action[6] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[2] == (action[4]) && action[4] == (t) && action[6] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
-                (action[0] == (action[3]) && action[3] == (t) && action[6] == RulesTicTacToe.EMPTY_SPACE_SYMBOL)
-        )
+        if ((action[7] == action[8] && action[8] == t && action[6] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[2] == action[4] && action[4] == t && action[6] == RulesTicTacToe.EMPTY_SPACE_SYMBOL) ||
+                (action[0] == action[3] && action[3] == t && action[6] == RulesTicTacToe.EMPTY_SPACE_SYMBOL))
             return 6;
 
         return -1;
@@ -237,17 +236,16 @@ public class Bot1 extends Bot {
      */
     private int[] emptyIndices(char[] temp) {
         int count = 0;
-        char opponent = 'O';
 
         for (int i = 0; i < 9; i++) {
-            if (temp[i] != opponent && temp[i] != mySign)
+            if (temp[i] != opponentSign && temp[i] != mySign)
                 count++;
         }
         int[] a = new int[count];
 
         count = 0;
         for (int i = 0; i < 9; i++) {
-            if (temp[i] != opponent && temp[i] != mySign) {
+            if (temp[i] != opponentSign && temp[i] != mySign) {
                 a[count] = i;
                 count++;
             }

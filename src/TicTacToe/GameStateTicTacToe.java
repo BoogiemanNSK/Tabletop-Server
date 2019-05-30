@@ -12,7 +12,7 @@ public class GameStateTicTacToe implements IGameState {
                 gameField[i][j] = '_';
     }
 
-    public char[][] GameField(){
+    char[][] GameField(){
         return gameField;
     }
 

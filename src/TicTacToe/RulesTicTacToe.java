@@ -30,7 +30,7 @@ public class RulesTicTacToe implements IRules {
         char[][] board = y.GameField();
 
         for (int i = 0; i < 3; i++) {
-            if (board[i][0] == board[i][1] & board[i][1] == board[0][2]) {
+            if (board[i][0] == board[i][1] & board[i][1] == board[i][2]) {
                 if (board[i][0] == PLAYERS_SYMBOLS[0])
                     return GameResults.FIRST_WIN;
                 if (board[i][0] == PLAYERS_SYMBOLS[1])
