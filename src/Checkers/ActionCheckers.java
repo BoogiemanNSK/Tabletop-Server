@@ -9,4 +9,9 @@ class ActionCheckers implements IAction {
     Token token;
     LinkedList<Position> positions;
 
+    public ActionCheckers(Token token, LinkedList<Position> positions) {
+        this.token = token;
+        this.positions = positions;
+    }
+
 }
