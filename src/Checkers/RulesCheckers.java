@@ -11,7 +11,7 @@ import java.util.Collection;
 public class RulesCheckers implements IRules {
 
     //  Rules for Checkers notes:
-    //  1) Player with id = 0 starts on top (rows 0, 1, 2) and player with id = 1 on bottom (rows 6, 7 ,8)
+    //  1) Player with id = 0 starts on top (rows 0, 1, 2) and player with id = 1 on bottom (rows 5, 6 ,7)
     //  2) Positions in Action have to be logically consistent (sequential), thus,
     //          last position of token is the last position in Linked List in Action.
 
