@@ -1,5 +1,7 @@
+import Checkers.GameStateCheckers;
+import Checkers.RulesCheckers;
 import Interfaces.*;
-import TicTacToe.*;
+import Checkers.*;
 
 public class Main {
 
@@ -10,19 +12,22 @@ public class Main {
 
     public static void main(String[] args) {
         // Fill array of bots with existing bots
-        Bot[] bots = new Bot[PLAYERS];
+        Bot[] bots = new Bot1[PLAYERS];
         bots[0] = new Bot1(0);
-        bots[1] = new Bot2(1);
+        bots[1] = new Bot1(1);
 
         // Current game's rules
-        IRules rules = new RulesTicTacToe();
+        // IRules rules = new RulesTicTacToe();
+        IRules rules = new RulesCheckers();
 
         // Game State representation for current game
-        IGameState gameState = new GameStateTicTacToe();
+        // IGameState gameState = new GameStateTicTacToe();
+        IGameState gameState = new GameStateCheckers(bots[0], bots[1]);
 
         // Create and execute current game
-        Game ticTacToe = new Game(PLAYERS, TIMEOUT, bots, rules, gameState);
-        ticTacToe.Play();
+        // Game ticTacToe = new Game(PLAYERS, TIMEOUT, bots, rules, gameState);
+        Game checkers = new Game(PLAYERS, TIMEOUT, bots, rules, gameState);
+        checkers.Play();
     }
 
 }

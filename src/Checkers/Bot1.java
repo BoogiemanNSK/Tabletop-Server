@@ -51,7 +51,7 @@ public class Bot1 extends Bot {
 			// row above
 			if (bestToken.position.row + rowMoves >= 0 & bestToken.position.row + rowMoves <= stateCheckers.MAX_ROW) {
 				if (bestToken.position.column - 1 >= 0 & bestToken.position.column - 1 <= stateCheckers.MAX_COLUMN) {
-					Position destination = stateCheckers.getPosition(bestToken.position.row + 1,
+					Position destination = stateCheckers.getPosition(bestToken.position.row + rowMoves,
 							bestToken.position.column - 1);
 					if (stateCheckers.getToken(destination) == null) {
 						move = destination;
@@ -62,6 +62,7 @@ public class Bot1 extends Bot {
 		}
 
 		moves.add(move);
+		System.out.println("Token " + token.toString() + " to position " + move.toString());
 		return new ActionCheckers(bestToken, moves);
 	}
 }
