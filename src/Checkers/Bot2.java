@@ -171,7 +171,7 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.row - 1, position.column + front);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.row - 2, position.column + 2*front)
+                            Position potentialNewPosition = state.getPosition(position.row - 2, position.column + 2*front);
                             if (state.getToken(potentialNewPosition) == null &&
                                 inBoundaries(potentialNewPosition)) {
                                 result.add(myToken);
@@ -186,7 +186,7 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.row + 1, position.column - front);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.row + 2, position.column - 2*front)
+                            Position potentialNewPosition = state.getPosition(position.row + 2, position.column - 2*front);
                             if (state.getToken(potentialNewPosition) == null &&
                                     inBoundaries(potentialNewPosition)) {
                                 result.add(myToken);
@@ -201,7 +201,7 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.row + 1, position.column + front);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.row + 2, position.column + 2*front)
+                            Position potentialNewPosition = state.getPosition(position.row + 2, position.column + 2*front);
                             if (state.getToken(potentialNewPosition) == null &&
                                     inBoundaries(potentialNewPosition)) {
                                 result.add(myToken);
@@ -216,7 +216,7 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.row - 1, position.column - front);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.row - 2, position.column - 2*front)
+                            Position potentialNewPosition = state.getPosition(position.row - 2, position.column - 2*front);
                             if (state.getToken(potentialNewPosition) == null &&
                                     inBoundaries(potentialNewPosition)) {
                                 result.add(myToken);
