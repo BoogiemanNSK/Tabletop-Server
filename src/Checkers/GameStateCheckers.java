@@ -4,6 +4,7 @@ import Interfaces.Bot;
 import Interfaces.IAction;
 import Interfaces.IGameState;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -58,7 +59,7 @@ public class GameStateCheckers implements IGameState {
     }
 
     Position getPosition(int row, int column) {
-        return allPositions[MAX_COLUMN * row + column];
+        return allPositions[(MAX_COLUMN + 1) * row + column];
     }
 
     void moveToken(Token token, Position newPos) {
@@ -91,7 +92,7 @@ public class GameStateCheckers implements IGameState {
 
         for (int i = 0; i <= MAX_ROW; i++) {
             for (int j = 0; j <= MAX_COLUMN; j++) {
-                allPositions[(MAX_COLUMN) * i + j] = new Position(i, j);
+                allPositions[(MAX_COLUMN + 1) * i + j] = new Position(i, j);
             }
         }
 
@@ -112,6 +113,33 @@ public class GameStateCheckers implements IGameState {
     }
 
     @Override
+    public String toString() {
+        Bot temp = null;
+        char c;
+        String out = "";
+
+        for (int i = 0; i <= MAX_ROW; i++) {
+            for (int j = 0; j <= MAX_COLUMN; j++) {
+                Token cell = getToken(getPosition(i, j));
+                if (cell == null) {
+                    c = '_';
+                } else {
+                    if (temp == null) { temp = cell.player; }
+                    if (cell.player == temp) {
+                        c = cell.isCapital ? 'W' : 'w';
+                    } else {
+                        c = cell.isCapital ? 'B' : 'b';
+                    }
+                }
+                out = out + c;
+            }
+            out = out + '\n';
+        }
+
+        return out;
+    }
+
+    @Override
     public void showField() {
         Bot temp = null;
         char c;
@@ -129,7 +157,7 @@ public class GameStateCheckers implements IGameState {
                         c = cell.isCapital ? 'B' : 'b';
                     }
                 }
-                System.out.println(c);
+                System.out.print(c);
             }
             System.out.println();
         }
