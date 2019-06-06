@@ -9,7 +9,6 @@ class Game {
     private int players;
     private int timeout;
     private int botsLost;
-    private boolean[] inGame;
     private Bot[] bots;
     private IRules rules;
     private IGameState state;
@@ -27,11 +26,6 @@ class Game {
         bots = arrayOfBots;
         rules = gameRules;
         state = gameState;
-
-        inGame = new boolean[players];
-        for (int i = 0; i < players; i++) {
-            inGame[i] = true;
-        }
     }
 
     // Main Game Process
@@ -45,7 +39,7 @@ class Game {
         int turn = 0;
         while (!gameFinished) {
             // Check if any bots are left in-game and skip if current bot is lost.
-            if (!inGame[turn]) {
+            if (!state.getPlayerIsActive()[turn]) {
                 if (turn == 0) {
                     botsLost = 1;
                 } else {
@@ -72,7 +66,7 @@ class Game {
                 // Validate bot's action
                 if (rules.validate(state, decision)) {
                     // Update game state with bot's action
-                    rules.update(state, decision);
+                    state.update(decision);
 
                     // Print Game state
                     state.showField();
@@ -86,16 +80,16 @@ class Game {
                     }
                 } else {
                     System.out.println("Bot #" + (turn + 1) + " made invalid action. It has lost.");
-                    inGame[turn] = false;
+                    state.makeInactive(turn);
                 }
             } catch (InterruptedException | ExecutionException e) {
                 // Internal thread exceptions
                 e.printStackTrace();
-                inGame[turn] = false;
+                state.makeInactive(turn);
             } catch (TimeoutException te) {
                 // No trial was made in TIMEOUT seconds
                 System.out.println("Bot #" + (turn + 1) + " was timed out. It has lost.");
-                inGame[turn] = false;
+                state.makeInactive(turn);
             }
 
             // Give turn to the next bot

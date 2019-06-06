@@ -6,7 +6,6 @@ import Interfaces.IGameState;
 import Interfaces.IRules;
 import Utils.GameResults;
 import Checkers.GameStateCheckers.Position;
-import Checkers.GameStateCheckers.Token;
 import java.util.Collection;
 
 public class RulesCheckers implements IRules {
@@ -23,51 +22,13 @@ public class RulesCheckers implements IRules {
     }
 
     @Override
-    public void update(IGameState game, IAction x) {
-        ActionCheckers action = (ActionCheckers) x;
-        GameStateCheckers state = (GameStateCheckers) game;
-
-        // Remove all opponent checkers on the way of token
-        Position lastPosition = action.token.position;
-        for (Position p : action.positions) {
-            int dy = (p.row > lastPosition.row) ? 1 : -1;
-            int dx = (p.column > lastPosition.column) ? 1 : -1;
-
-            int i = lastPosition.row + dy;
-            int j = lastPosition.column + dx;
-            while (i != p.row || j != p.column) {
-                Token token = state.getToken(state.getPosition(i, j));
-                if (token != null) {
-                    state.killToken(token);
-                }
-
-                i += dy;
-                j += dx;
-            }
-
-            // Check if token should become capital
-            if (shouldBecomeCapital(action.token.player.id, p)) {
-                action.token.isCapital = true;
-            }
-
-            lastPosition = p;
-        }
-
-        // Update position of token
-        lastPosition = action.positions.getLast();
-        state.moveToken(action.token, lastPosition);
-
-        moveCount++;
-    }
-
-    @Override
     public GameResults checkResult(IGameState game) {
         GameStateCheckers gameState = (GameStateCheckers) game;
-//      if only one player is still in the game, they win
-//      -> need to add number of players to game state
+        //  if only one player is still in the game, they win
+        if (!gameState.getPlayerIsActive()[0]) { return GameResults.SECOND_WIN;}
+        if (!gameState.getPlayerIsActive()[1]) { return GameResults.FIRST_WIN;}
 
-
-//      check number of moves made: after 50 moves (each) there is no king and no token is taken -> draw
+        //  check number of moves made: after 50 moves (each) there is no king and no token is taken -> draw
         if (moveCount == 100) {
             int capitalNum = 0;
             int[] tokensNum = {0, 0};
@@ -84,7 +45,7 @@ public class RulesCheckers implements IRules {
             }
         }
 
-//      if all player's tokens are captured, the other player wins
+        //  if all player's tokens are captured, the other player wins
         int[] tokensNum = {0, 0};
         for (GameStateCheckers.Token token : gameState.getAllTokens()) {
             tokensNum[token.player.id]++;
@@ -240,7 +201,7 @@ public class RulesCheckers implements IRules {
                 column >= 0 && column <= GameStateCheckers.MAX_COLUMN;
     }
 
-    private boolean shouldBecomeCapital(int id, Position p) {
+    public static boolean shouldBecomeCapital(int id, Position p) {
         return (id == 0 && p.row == GameStateCheckers.MAX_ROW) || (id == 1 && p.row == 0);
     }
 
