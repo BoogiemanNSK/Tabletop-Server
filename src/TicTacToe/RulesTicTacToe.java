@@ -71,15 +71,4 @@ public class RulesTicTacToe implements IRules {
         return GameResults.HALF_WIN;
     }
 
-    // Updates game board according to specified action
-    public void update(IGameState game, IAction x) {
-        GameStateTicTacToe y = (GameStateTicTacToe) game;
-        ActionTicTacToe u = (ActionTicTacToe) x;
-
-        char[][] board = y.GameField();
-        int position = u.position;
-
-        board[position / 3][position % 3] = u.symbol;
-    }
-
 }

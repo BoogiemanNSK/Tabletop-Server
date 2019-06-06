@@ -106,6 +106,7 @@ public class GameStateCheckers implements IGameState {
         }
 
         moveCount = 0;
+        playerIsActive = new boolean[2];
         playerIsActive[0] = true;
         playerIsActive[1] = true;
     }
