@@ -5,7 +5,8 @@ import Interfaces.IAction;
 import Interfaces.IGameState;
 import Interfaces.IRules;
 import Utils.GameResults;
-
+import Checkers.GameStateCheckers.Position;
+import Checkers.GameStateCheckers.Token;
 import java.util.Collection;
 
 public class RulesCheckers implements IRules {
@@ -29,7 +30,11 @@ public class RulesCheckers implements IRules {
             int i = lastPosition.row + dy;
             int j = lastPosition.column + dx;
             while (i != p.row || j != p.column) {
-                state.gameField.remove(new Position(i, j));
+                Token token = state.getToken(state.getPosition(i, j));
+                if (token != null) {
+                    state.killToken(token);
+                }
+
                 i += dy;
                 j += dx;
             }
@@ -44,9 +49,7 @@ public class RulesCheckers implements IRules {
 
         // Update position of token
         lastPosition = action.positions.getLast();
-        state.gameField.remove(action.token.position);
-        state.gameField.put(lastPosition, action.token);
-        action.token.position = lastPosition;
+        state.moveToken(action.token, lastPosition);
     }
 
     @Override
@@ -71,13 +74,13 @@ public class RulesCheckers implements IRules {
         int i = action.token.position.row + dy;
         int j = action.token.position.column + dx;
         while (i != moveTo.row || j != moveTo.column) {
-            Position next = new Position(i, j);
-            if (state.gameField.get(next).player != action.token.player) {
+            Position next = state.getPosition(i, j);
+            if (state.getToken(next).player != action.token.player) {
                 noKills = false;
                 break;
             }
 
-            if (state.gameField.get(next).player == action.token.player) {
+            if (state.getToken(next).player == action.token.player) {
                 return false;
             }
 
@@ -92,7 +95,7 @@ public class RulesCheckers implements IRules {
             if (!inBoundaries(moveTo.row, moveTo.column))
                 return false;
 
-            if (state.gameField.get(moveTo) != null)
+            if (state.getToken(moveTo) != null)
                 return false;
 
             if (!action.token.isCapital && (dx * dx) != 1)
@@ -108,7 +111,7 @@ public class RulesCheckers implements IRules {
                 return false;
 
             // Check that there is no enemy checkers to kill
-            Collection<GameStateCheckers.Token> tokens = state.gameField.values();
+            Collection<GameStateCheckers.Token> tokens = state.getAllTokens();
             for (GameStateCheckers.Token token : tokens) {
                 if (token.player != action.token.player) {
                     continue;
@@ -136,7 +139,7 @@ public class RulesCheckers implements IRules {
                 return false;
 
             // Check that there is free space to land
-            if (state.gameField.get(nextPos) != null)
+            if (state.getToken(nextPos) != null)
                 return false;
 
             // Move is diagonal
@@ -152,13 +155,13 @@ public class RulesCheckers implements IRules {
                 //      that there is no ally on the way or more than one enemy
                 boolean foundOpponent = false;
                 while (true) {
-                    if (state.gameField.get(new Position(i, j)) != null) {
+                    if (state.getToken(state.getPosition(i, j)) != null) {
 
                         if (foundOpponent ||
-                                state.gameField.get(new Position(i, j)).player == action.token.player)
+                                state.getToken(state.getPosition(i, j)).player == action.token.player)
                             return false;
 
-                        if (state.gameField.get(new Position(i, j)).player != action.token.player)
+                        if (state.getToken(state.getPosition(i, j)).player != action.token.player)
                             foundOpponent = true;
 
                     } else if (i == nextPos.row && j == nextPos.column) {
@@ -173,8 +176,8 @@ public class RulesCheckers implements IRules {
                     return false;
 
                 // Check that token really kills opponent token
-                Position temp = new Position(nextPos.row + (dy / 2), nextPos.column + (dx / 2));
-                if (state.gameField.get(temp) == null || state.gameField.get(temp).player != action.token.player)
+                Position temp = state.getPosition(nextPos.row + (dy / 2), nextPos.column + (dx / 2));
+                if (state.getToken(temp) == null || state.getToken(temp).player != action.token.player)
                     return false;
             }
 
@@ -211,13 +214,13 @@ public class RulesCheckers implements IRules {
             i = y + 1;
             j = x + 1;
             while (inBoundaries(i, j)) {
-                if (state.gameField.get(new Position(i, j)) == null) {
+                if (state.getToken(state.getPosition(i, j)) == null) {
                     i++;
                     j++;
                     continue;
                 }
-                if (state.gameField.get(new Position(i, j)).player != player &&
-                        state.gameField.get(new Position(i + 1, j + 1)) == null)
+                if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getToken(state.getPosition(i + 1, j + 1)) == null)
                     return true;
                 break;
             }
@@ -225,13 +228,13 @@ public class RulesCheckers implements IRules {
             i = y + 1;
             j = x - 1;
             while (inBoundaries(i, j)) {
-                if (state.gameField.get(new Position(i, j)) == null) {
+                if (state.getToken(state.getPosition(i, j)) == null) {
                     i++;
                     j--;
                     continue;
                 }
-                if (state.gameField.get(new Position(i, j)).player != player &&
-                        state.gameField.get(new Position(i + 1, j - 1)) == null)
+                if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getToken(state.getPosition(i + 1, j - 1)) == null)
                     return true;
                 break;
             }
@@ -239,13 +242,13 @@ public class RulesCheckers implements IRules {
             i = y - 1;
             j = x + 1;
             while (inBoundaries(i, j)) {
-                if (state.gameField.get(new Position(i, j)) == null) {
+                if (state.getToken(state.getPosition(i, j)) == null) {
                     i--;
                     j++;
                     continue;
                 }
-                if (state.gameField.get(new Position(i, j)).player != player &&
-                        state.gameField.get(new Position(i - 1, j + 1)) == null)
+                if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getToken(state.getPosition(i - 1, j + 1)) == null)
                     return true;
                 break;
             }
@@ -253,13 +256,13 @@ public class RulesCheckers implements IRules {
             i = y - 1;
             j = x - 1;
             while (inBoundaries(i, j)) {
-                if (state.gameField.get(new Position(i, j)) == null) {
+                if (state.getToken(state.getPosition(i, j)) == null) {
                     i--;
                     j--;
                     continue;
                 }
-                if (state.gameField.get(new Position(i, j)).player != player &&
-                        state.gameField.get(new Position(i - 1, j - 1)) == null)
+                if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getToken(state.getPosition(i - 1, j - 1)) == null)
                     return true;
                 break;
             }
@@ -268,28 +271,28 @@ public class RulesCheckers implements IRules {
             //      just near itself
         } else {
 
-            if (state.gameField.get(new Position(y + 1, x + 1)) != null &&
-                    state.gameField.get(new Position(y + 1, x + 1)).player != player &&
+            if (state.getToken(state.getPosition(y + 1, x + 1)) != null &&
+                    state.getToken(state.getPosition(y + 1, x + 1)).player != player &&
                     inBoundaries(y + 2, x + 2) &&
-                    state.gameField.get(new Position(y + 2, x + 2)) == null)
+                    state.getToken(state.getPosition(y + 2, x + 2)) == null)
                 return true;
 
-            if (state.gameField.get(new Position(y + 1, x - 1)) != null &&
-                    state.gameField.get(new Position(y + 1, x - 1)).player != player &&
+            if (state.getToken(state.getPosition(y + 1, x - 1)) != null &&
+                    state.getToken(state.getPosition(y + 1, x - 1)).player != player &&
                     inBoundaries(y + 2, x - 2) &&
-                    state.gameField.get(new Position(y + 2, x - 2)) == null)
+                    state.getToken(state.getPosition(y + 2, x - 2)) == null)
                 return true;
 
-            if (state.gameField.get(new Position(y - 1, x + 1)) != null &&
-                    state.gameField.get(new Position(y - 1, x + 1)).player != player &&
+            if (state.getToken(state.getPosition(y - 1, x + 1)) != null &&
+                    state.getToken(state.getPosition(y - 1, x + 1)).player != player &&
                     inBoundaries(y - 2, x + 2) &&
-                    state.gameField.get(new Position(y - 2, x + 2)) == null)
+                    state.getToken(state.getPosition(y - 2, x + 2)) == null)
                 return true;
 
-            return state.gameField.get(new Position(y - 1, x - 1)) != null &&
-                    state.gameField.get(new Position(y - 1, x - 1)).player != player &&
+            return state.getToken(state.getPosition(y - 1, x - 1)) != null &&
+                    state.getToken(state.getPosition(y - 1, x - 1)).player != player &&
                     inBoundaries(y - 2, x - 2) &&
-                    state.gameField.get(new Position(y - 2, x - 2)) == null;
+                    state.getToken(state.getPosition(y - 2, x - 2)) == null;
 
         }
 

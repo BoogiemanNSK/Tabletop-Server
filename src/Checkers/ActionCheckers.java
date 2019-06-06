@@ -2,6 +2,7 @@ package Checkers;
 
 import Interfaces.IAction;
 import Checkers.GameStateCheckers.Token;
+import Checkers.GameStateCheckers.Position;
 import java.util.LinkedList;
 
 class ActionCheckers implements IAction {
