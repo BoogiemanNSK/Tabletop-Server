@@ -16,6 +16,12 @@ public class RulesCheckers implements IRules {
     //  2) Positions in Action have to be logically consistent (sequential), thus,
     //          last position of token is the last position in Linked List in Action.
 
+    private int moveCount;
+
+    public RulesCheckers() {
+        moveCount = 0;
+    }
+
     @Override
     public void update(IGameState game, IAction x) {
         ActionCheckers action = (ActionCheckers) x;
@@ -50,11 +56,47 @@ public class RulesCheckers implements IRules {
         // Update position of token
         lastPosition = action.positions.getLast();
         state.moveToken(action.token, lastPosition);
+
+        moveCount++;
     }
 
     @Override
     public GameResults checkResult(IGameState game) {
-        return null;
+        GameStateCheckers gameState = (GameStateCheckers) game;
+//      if only one player is still in the game, they win
+//      -> need to add number of players to game state
+
+
+//      check number of moves made: after 50 moves (each) there is no king and no token is taken -> draw
+        if (moveCount == 100) {
+            int capitalNum = 0;
+            int[] tokensNum = {0, 0};
+            for (GameStateCheckers.Token token : gameState.getAllTokens()) {
+                if (token.isCapital) {
+                    capitalNum++;
+                }
+                tokensNum[token.player.id]++;
+            }
+            if (capitalNum == 0) {
+                if (tokensNum[0] == 12 && tokensNum[1] == 12) {
+                    return GameResults.HALF_WIN;
+                }
+            }
+        }
+
+//      if all player's tokens are captured, the other player wins
+        int[] tokensNum = {0, 0};
+        for (GameStateCheckers.Token token : gameState.getAllTokens()) {
+            tokensNum[token.player.id]++;
+        }
+        if (tokensNum[0] == 0) {
+            return GameResults.SECOND_WIN;
+        }
+        if (tokensNum[1] == 0) {
+            return GameResults.FIRST_WIN;
+        }
+
+        return GameResults.GAME_NOT_OVER;
     }
 
     @Override
