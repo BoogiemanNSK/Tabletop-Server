@@ -5,6 +5,8 @@ import Interfaces.IAction;
 import Interfaces.IGameState;
 import Checkers.GameStateCheckers.Position;
 import Checkers.GameStateCheckers.Token;
+
+import java.util.Collection;
 import java.util.LinkedList;
 
 public class Bot2 extends Bot {
@@ -45,7 +47,7 @@ public class Bot2 extends Bot {
         // Choose the best move, considering how close it is to enemy line
         ActionCheckers bestMove = null;
         for (ActionCheckers t : bestMoves) {
-            if (bestMove == null  ||
+            if (bestMove == null ||
                     Math.abs(enemyLine - t.positions.getLast().row) <
                             Math.abs(enemyLine - bestMove.positions.getLast().row)) {
                 bestMove = t;
@@ -64,9 +66,65 @@ public class Bot2 extends Bot {
         int y = move.token.position.row;
         int x = move.token.position.column;
         int i, j;
+        Position p;
 
-        i = y + 1; j = x + 1;
-        while (inBoundaries(state.getPosition(i, j)) && state.getToken(state.getPosition(i, j)) != null)
+        i = y + 1;
+        j = x + 1;
+        p = state.getPosition(i, j);
+        while (inBoundaries(p) && state.getToken(p) == null) {
+            i++;
+            j++;
+            p = state.getPosition(i, j);
+        }
+        if (inBoundaries(p) && state.getToken(p).player != this) {
+            if ((state.getToken(p).isCapital || i == p.row - 1) &&
+                    state.getToken(state.getPosition(i - 1, j - 1)) == null) {
+                return false;
+            }
+        }
+
+        i = y + 1;
+        j = x - 1;
+        p = state.getPosition(i, j);
+        while (inBoundaries(p) && state.getToken(p) == null) {
+            i++;
+            j--;
+            p = state.getPosition(i, j);
+        }
+        if (inBoundaries(p) && state.getToken(p).player != this) {
+            if ((state.getToken(p).isCapital || i == p.row - 1) &&
+                    state.getToken(state.getPosition(i - 1, j + 1)) == null) {
+                return false;
+            }
+        }
+
+        i = y - 1;
+        j = x + 1;
+        p = state.getPosition(i, j);
+        while (inBoundaries(p) && state.getToken(p) == null) {
+            i--;
+            j++;
+            p = state.getPosition(i, j);
+        }
+        if (inBoundaries(p) && state.getToken(p).player != this) {
+            if ((state.getToken(p).isCapital || i == p.row + 1) &&
+                    state.getToken(state.getPosition(i + 1, j - 1)) == null) {
+                return false;
+            }
+        }
+
+        i = y - 1;
+        j = x - 1;
+        p = state.getPosition(i, j);
+        while (inBoundaries(p) && state.getToken(p) == null) {
+            i--;
+            j--;
+            p = state.getPosition(i, j);
+        }
+        if (inBoundaries(p) && state.getToken(p).player != this) {
+            return (!state.getToken(p).isCapital && i != p.row + 1) ||
+                    state.getToken(state.getPosition(i + 1, j + 1)) != null;
+        }
 
         return true;
     }
@@ -79,9 +137,75 @@ public class Bot2 extends Bot {
 
     private LinkedList<ActionCheckers> allPossibleMovesList(GameStateCheckers state) {
         LinkedList<ActionCheckers> result = new LinkedList<>();
-        // TODO Get list of all non-killing moves
-        //      (consider that killing moves are not possible if this function was called)
+        Collection<Token> allTokens = state.getAllTokens();
+        Position p;
+        int x, y, i, j;
+
+        for (Token t : allTokens) {
+            if (t.player == this) {
+                if (t.isCapital) {
+                    y = t.position.row;
+                    x = t.position.column;
+
+                    i = x + 1;
+                    j = y + 1;
+                    p = state.getPosition(i, j);
+                    while (p != null) {
+                        addIfFree(result, t, p, state);
+                        i++;
+                        j++;
+                        p = state.getPosition(i, j);
+                    }
+
+                    i = x + 1;
+                    j = y - 1;
+                    p = state.getPosition(i, j);
+                    while (p != null) {
+                        addIfFree(result, t, p, state);
+                        i++;
+                        j--;
+                        p = state.getPosition(i, j);
+                    }
+
+                    i = x - 1;
+                    j = y + 1;
+                    p = state.getPosition(i, j);
+                    while (p != null) {
+                        addIfFree(result, t, p, state);
+                        i--;
+                        j++;
+                        p = state.getPosition(i, j);
+                    }
+
+                    i = x - 1;
+                    j = y - 1;
+                    p = state.getPosition(i, j);
+                    while (p != null) {
+                        addIfFree(result, t, p, state);
+                        i--;
+                        j--;
+                        p = state.getPosition(i, j);
+                    }
+                } else {
+                    p = state.getPosition(t.position.row + front, t.position.column + 1);
+                    addIfFree(result, t, p, state);
+
+                    p = state.getPosition(t.position.row + front, t.position.column - 1);
+                    addIfFree(result, t, p, state);
+                }
+            }
+        }
+
         return result;
+    }
+
+    private void addIfFree(LinkedList<ActionCheckers> list, Token t, Position p, GameStateCheckers state) {
+        if (p != null && state.getToken(p) == null) {
+            LinkedList<Position> moveList = new LinkedList<>();
+            moveList.add(p);
+            ActionCheckers action = new ActionCheckers(t, moveList);
+            list.add(action);
+        }
     }
 
     private LinkedList<ActionCheckers> maxKillerMoves(LinkedList<Token> killerTokens, GameStateCheckers state) {
