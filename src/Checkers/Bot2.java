@@ -12,15 +12,6 @@ public class Bot2 extends Bot {
     private int front;
     private int enemyLine;
 
-    private class Move {
-        Token token;
-        Position newPos;
-        Move(Token _token, Position _newPos) {
-            token = _token;
-            newPos = _newPos;
-        }
-    }
-
     public Bot2(int botId) {
         super(botId);
         front = (botId == 0) ? 1 : -1;
@@ -30,53 +21,38 @@ public class Bot2 extends Bot {
     @Override
     public IAction makeDecision(IGameState currentState) {
         GameStateCheckers stateCheckers = (GameStateCheckers) currentState;
-        LinkedList<Position> moves = new LinkedList<>();
-        Token bestToken = null;
-
         LinkedList<Token> killersTokens = killerTokensList(stateCheckers);
+        LinkedList<ActionCheckers> bestMoves;
 
-        // Strategy 1 - If it is required to kill someone, then kill as many as possible,
-        //      if many variants are possible choose the one that kills more kings, then
-        //      the one that does not put token in danger,
-        //      finally the one that moves token as far to enemy line as possible.
-        if (killersTokens.size() > 0) {
-            // TODO All above
+        // If there are any possible killing moves, consider only them
+        if (killersTokens.size() > 0)
+            bestMoves = maxKillerMoves(killersTokens, stateCheckers);
+        else
+            bestMoves = allPossibleMovesList(stateCheckers);
+
+        LinkedList<ActionCheckers> safeMoves = new LinkedList<>();
+
+        // Collect set of safe moves
+        for (ActionCheckers m : bestMoves) {
+            if (isSafe(m, stateCheckers))
+                safeMoves.add(m);
         }
 
-        // Strategy 2 - If it is not required to kill anyone, then choose the variant,
-        //      that does not put checker in danger, then the one that is closer to enemy line.
-        else {
-            LinkedList<Move> bestMoves = allPossibleMovesList(stateCheckers);
-            LinkedList<Move> safeMoves = new LinkedList<>();
-
-            // Collect set of safe moves
-            for (Move t : bestMoves) {
-                if (t.token.isCapital) {
-                    // TODO Check all directions and add safe moves to list
-                } else {
-                    // TODO Check only 'front' neighbour cell and safe moves to list
-                }
-            }
-
-            if (safeMoves.size() > 0) {
-                bestMoves = safeMoves;
-            }
-
-            // Choose the best move, considering how close it is to enemy line
-            Move bestMove = null;
-            for (Move t : bestMoves) {
-                if (bestMove == null  ||
-                        Math.abs(enemyLine - t.newPos.row) < Math.abs(enemyLine - bestMove.newPos.row)) {
-                    bestMove = t;
-                }
-            }
-
-            assert bestMove != null;
-            bestToken = bestMove.token;
-            moves.add(bestMove.newPos);
+        if (safeMoves.size() > 0) {
+            bestMoves = safeMoves;
         }
 
-        return new ActionCheckers(bestToken, moves);
+        // Choose the best move, considering how close it is to enemy line
+        ActionCheckers bestMove = null;
+        for (ActionCheckers t : bestMoves) {
+            if (bestMove == null  ||
+                    Math.abs(enemyLine - t.positions.getLast().row) <
+                            Math.abs(enemyLine - bestMove.positions.getLast().row)) {
+                bestMove = t;
+            }
+        }
+
+        return bestMove;
     }
 
     private boolean inBoundaries(Position p) {
@@ -84,8 +60,14 @@ public class Bot2 extends Bot {
                 p.column >= 0 && p.column <= GameStateCheckers.MAX_COLUMN;
     }
 
-    private boolean isSafe(Move move, GameStateCheckers state) {
-        // TODO Check that there are no enemy checkers that can kill token after given move
+    private boolean isSafe(ActionCheckers move, GameStateCheckers state) {
+        int y = move.token.position.row;
+        int x = move.token.position.column;
+        int i, j;
+
+        i = y + 1; j = x + 1;
+        while (inBoundaries(state.getPosition(i, j)) && state.getToken(state.getPosition(i, j)) != null)
+
         return true;
     }
 
@@ -95,15 +77,15 @@ public class Bot2 extends Bot {
         return result;
     }
 
-    private LinkedList<Move> allPossibleMovesList(GameStateCheckers state) {
-        LinkedList<Move> result = new LinkedList<>();
+    private LinkedList<ActionCheckers> allPossibleMovesList(GameStateCheckers state) {
+        LinkedList<ActionCheckers> result = new LinkedList<>();
         // TODO Get list of all non-killing moves
         //      (consider that killing moves are not possible if this function was called)
         return result;
     }
 
-    private LinkedList<Token> maxKillerTokensList(LinkedList<Token> killerTokens, GameStateCheckers state) {
-        LinkedList<Token> result = new LinkedList<>();
+    private LinkedList<ActionCheckers> maxKillerMoves(LinkedList<Token> killerTokens, GameStateCheckers state) {
+        LinkedList<ActionCheckers> result = new LinkedList<>();
         // TODO Get list of best killers in terms of how many enemy token they kill (kings count as 2)
         return result;
     }

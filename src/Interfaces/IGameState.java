@@ -8,4 +8,20 @@ public interface IGameState {
      */
     void showField();
 
+    /*
+    take as input IAction
+    update the current GameState
+     */
+    void update(IAction x);
+
+    /*
+    get currently active players
+     */
+    boolean[] getPlayerIsActive();
+
+    /*
+    take as input player number
+    make the player inactive
+     */
+    void makeInactive(int player);
 }

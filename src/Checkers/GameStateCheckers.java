@@ -1,6 +1,7 @@
 package Checkers;
 
 import Interfaces.Bot;
+import Interfaces.IAction;
 import Interfaces.IGameState;
 
 import java.util.Collection;
@@ -20,6 +21,9 @@ public class GameStateCheckers implements IGameState {
 
     private HashMap<Position, Token> gameField;
     private Position[] allPositions;
+
+    private int moveCount;
+    private boolean[] playerIsActive;
 
     final static int MAX_ROW = 7;
     final static int MAX_COLUMN = 7;
@@ -67,6 +71,20 @@ public class GameStateCheckers implements IGameState {
         gameField.remove(token.position);
     }
 
+    int getMoveCount() {
+        return moveCount;
+    }
+
+    @Override
+    public boolean[] getPlayerIsActive() {
+        return playerIsActive;
+    }
+
+    @Override
+    public void makeInactive(int player) {
+        playerIsActive[player] = false;
+    }
+
     public GameStateCheckers(Bot player1, Bot player2) {
         gameField = new HashMap<>();
         allPositions = new Position[(MAX_ROW + 1) * (MAX_COLUMN + 1)];
@@ -86,6 +104,11 @@ public class GameStateCheckers implements IGameState {
                 gameField.put(p2, new Token(player2, p2));
             }
         }
+
+        moveCount = 0;
+        playerIsActive = new boolean[2];
+        playerIsActive[0] = true;
+        playerIsActive[1] = true;
     }
 
     @Override
@@ -110,6 +133,44 @@ public class GameStateCheckers implements IGameState {
             }
             System.out.println();
         }
+    }
+
+    @Override
+    public void update(IAction x) {
+        ActionCheckers action = (ActionCheckers) x;
+        GameStateCheckers state = this;
+
+        // Remove all opponent checkers on the way of token
+        Position lastPosition = action.token.position;
+        for (Position p : action.positions) {
+            int dy = (p.row > lastPosition.row) ? 1 : -1;
+            int dx = (p.column > lastPosition.column) ? 1 : -1;
+
+            int i = lastPosition.row + dy;
+            int j = lastPosition.column + dx;
+            while (i != p.row || j != p.column) {
+                Token token = state.getToken(state.getPosition(i, j));
+                if (token != null) {
+                    state.killToken(token);
+                }
+
+                i += dy;
+                j += dx;
+            }
+
+            // Check if token should become capital
+            if (RulesCheckers.shouldBecomeCapital(action.token.player.id, p)) {
+                action.token.isCapital = true;
+            }
+
+            lastPosition = p;
+        }
+
+        // Update position of token
+        lastPosition = action.positions.getLast();
+        state.moveToken(action.token, lastPosition);
+
+        moveCount++;
     }
 
 }

@@ -5,12 +5,6 @@ import Utils.GameResults;
 public interface IRules {
 
     /*
-    take as input IGameState and IAction
-    update the current GameState
-     */
-    void update(IGameState game, IAction x);
-
-    /*
     method take the gameState as input and check is it end of the game
     return the one possible result from Enumerator GameResults
      */
