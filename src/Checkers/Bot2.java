@@ -131,7 +131,101 @@ public class Bot2 extends Bot {
 
     private LinkedList<Token> killerTokensList(GameStateCheckers state) {
         LinkedList<Token> result = new LinkedList<>();
-        // TODO Get list of token that can kill anyone
+        for (Token myToken : state.getAllTokens()) {
+            if (myToken.player.id == this.id) {
+                if (!myToken.isCapital) {
+                    Position position = state.getPosition(myToken.position.row + front,
+                                                    myToken.position.column - 1);
+                    if (position != null) {
+                        Token otherToken = state.getToken(position);
+                        if (otherToken != null) {
+                            if (otherToken.player.id != this.id) {
+                                position = state.getPosition(myToken.position.row + 2*front,
+                                        myToken.position.column - 2);
+                                if (state.getToken(position) == null && inBoundaries(position)) {
+                                    result.add(myToken);
+                                }
+                            }
+                        }
+                    }
+                    position = state.getPosition(myToken.position.row + front,
+                                            myToken.position.column + 1);
+                    if (position != null) {
+                        Token otherToken = state.getToken(position);
+                        if (otherToken != null) {
+                            if (otherToken.player.id != this.id) {
+                                position = state.getPosition(myToken.position.row + 2*front,
+                                        myToken.position.column + 2);
+                                if (state.getToken(position) == null && inBoundaries(position)) {
+                                    result.add(myToken);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Position position = state.getPosition(myToken.position.row - 1, myToken.position.column + front);
+                    // left front diagonally
+                    while ((state.getToken(position) == null ||
+                            state.getToken(position).player.id != this.id) &&
+                            inBoundaries(position)) {
+                        if (state.getToken(position) == null) {
+                            position = state.getPosition(position.row - 1, position.column + front);
+                        } else {
+                            Position potentialNewPosition = state.getPosition(position.row - 2, position.column + 2*front)
+                            if (state.getToken(potentialNewPosition) == null &&
+                                inBoundaries(potentialNewPosition)) {
+                                result.add(myToken);
+                            }
+                        }
+                    }
+                    // left back
+                    position = state.getPosition(myToken.position.row + 1, myToken.position.column - front);
+                    while ((state.getToken(position) == null ||
+                            state.getToken(position).player.id != this.id) &&
+                            inBoundaries(position)) {
+                        if (state.getToken(position) == null) {
+                            position = state.getPosition(position.row + 1, position.column - front);
+                        } else {
+                            Position potentialNewPosition = state.getPosition(position.row + 2, position.column - 2*front)
+                            if (state.getToken(potentialNewPosition) == null &&
+                                    inBoundaries(potentialNewPosition)) {
+                                result.add(myToken);
+                            }
+                        }
+                    }
+                    // right front
+                    position = state.getPosition(myToken.position.row + 1, myToken.position.column + front);
+                    while ((state.getToken(position) == null ||
+                            state.getToken(position).player.id != this.id) &&
+                            inBoundaries(position)) {
+                        if (state.getToken(position) == null) {
+                            position = state.getPosition(position.row + 1, position.column + front);
+                        } else {
+                            Position potentialNewPosition = state.getPosition(position.row + 2, position.column + 2*front)
+                            if (state.getToken(potentialNewPosition) == null &&
+                                    inBoundaries(potentialNewPosition)) {
+                                result.add(myToken);
+                            }
+                        }
+                    }
+                    // right back
+                    position = state.getPosition(myToken.position.row - 1, myToken.position.column - front);
+                    while ((state.getToken(position) == null ||
+                            state.getToken(position).player.id != this.id) &&
+                            inBoundaries(position)) {
+                        if (state.getToken(position) == null) {
+                            position = state.getPosition(position.row - 1, position.column - front);
+                        } else {
+                            Position potentialNewPosition = state.getPosition(position.row - 2, position.column - 2*front)
+                            if (state.getToken(potentialNewPosition) == null &&
+                                    inBoundaries(potentialNewPosition)) {
+                                result.add(myToken);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return result;
     }
 
