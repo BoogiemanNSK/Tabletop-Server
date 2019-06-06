@@ -1,11 +1,10 @@
 package Checkers;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 
 import Checkers.GameStateCheckers.Position;
 import Checkers.GameStateCheckers.Token;
@@ -48,6 +47,8 @@ public class Bot1 extends Bot {
 		Position move = null;
 		for (int i = myTokens.size() - 1; i >= 0; i--) {
 			bestToken = myTokens.get(i);
+			System.out.println("Best token at position.row " + bestToken.position.row + " and position.column "
+					+ bestToken.position.column);
 			// row above
 			if (bestToken.position.row + rowMoves >= 0 & bestToken.position.row + rowMoves <= stateCheckers.MAX_ROW) {
 				if (bestToken.position.column - 1 >= 0 & bestToken.position.column - 1 <= stateCheckers.MAX_COLUMN) {
@@ -62,7 +63,6 @@ public class Bot1 extends Bot {
 		}
 
 		moves.add(move);
-		System.out.println("Token " + token.toString() + " to position " + move.toString());
 		return new ActionCheckers(bestToken, moves);
 	}
 }
@@ -90,11 +90,9 @@ class TokenComparator implements Comparator {
 		if (t1.position.row > t2.position.row)
 			return 1 * rowMoves;
 		if (t1.position.row < t2.position.row)
-			return 0;
-		if (t1.position.column < t2.position.column)
-			return 1 * rowMoves;
-		if (t1.position.column > t2.position.column)
 			return -1 * rowMoves;
+		if (t1.position.row == t2.position.row & t1.position.column < t2.position.column)
+			return 1;
 		return 0;
 	}
 }
