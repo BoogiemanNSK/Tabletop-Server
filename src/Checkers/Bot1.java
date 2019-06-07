@@ -274,6 +274,9 @@ public class Bot1 extends Bot {
     }
 
     private boolean inBoundaries(Position p) {
+	    if (p == null) {
+	        return false;
+        }
         return p.row >= 0 && p.row <= GameStateCheckers.MAX_ROW &&
                 p.column >= 0 && p.column <= GameStateCheckers.MAX_COLUMN;
     }

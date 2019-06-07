@@ -60,7 +60,9 @@ public class GameStateCheckers implements IGameState {
 
     Position getPosition(int row, int column) {
         if ((MAX_COLUMN + 1) * row + column > (MAX_ROW + 1) * (MAX_COLUMN + 1) - 1 ||
-                (MAX_COLUMN + 1) * row + column < 0) {
+                (MAX_COLUMN + 1) * row + column < 0 ||
+                row < 0 || row > MAX_ROW ||
+                column < 0 || column > MAX_COLUMN) {
             return null;
         }
         return allPositions[(MAX_COLUMN + 1) * row + column];

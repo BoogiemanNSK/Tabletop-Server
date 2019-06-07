@@ -74,17 +74,20 @@ public class RulesCheckers implements IRules {
         int dy = moveTo.row - action.token.position.row;
         int dx = moveTo.column - action.token.position.column;
 
-        int i = action.token.position.row + dy;
-        int j = action.token.position.column + dx;
+        int i = action.token.position.row;
+        int j = action.token.position.column;
+        i += (dy > 0) ? 1 : -1;
+        j += (dx > 0) ? 1 : -1;
         while (i != moveTo.row || j != moveTo.column) {
             Position next = state.getPosition(i, j);
-            if (state.getToken(next).player != action.token.player) {
-                noKills = false;
-                break;
-            }
-
-            if (state.getToken(next).player == action.token.player) {
-                return false;
+            if (state.getToken(next) != null) {
+                if (state.getToken(next).player.id != action.token.player.id) {
+                    noKills = false;
+                    break;
+                }
+                if (state.getToken(next).player == action.token.player) {
+                    return false;
+                }
             }
 
             i += (dy > 0) ? 1 : -1;
@@ -162,8 +165,9 @@ public class RulesCheckers implements IRules {
                     if (state.getToken(state.getPosition(i, j)) != null) {
 
                         if (foundOpponent ||
-                                state.getToken(state.getPosition(i, j)).player == action.token.player)
+                                state.getToken(state.getPosition(i, j)).player == action.token.player) {
                             return false;
+                        }
 
                         if (state.getToken(state.getPosition(i, j)).player != action.token.player)
                             foundOpponent = true;
@@ -180,9 +184,10 @@ public class RulesCheckers implements IRules {
                     return false;
 
                 // Check that token really kills opponent token
-                Position temp = state.getPosition(nextPos.row + (dy / 2), nextPos.column + (dx / 2));
-                if (state.getToken(temp) == null || state.getToken(temp).player != action.token.player)
+                Position temp = state.getPosition(nextPos.row - (dy / 2), nextPos.column - (dx / 2));
+                if (state.getToken(temp) == null || state.getToken(temp).player.id == action.token.player.id) {
                     return false;
+                }
             }
 
             if (!tempIsCapital && shouldBecomeCapital(action.token.player.id, nextPos)) {
