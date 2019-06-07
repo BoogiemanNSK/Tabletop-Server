@@ -121,6 +121,7 @@ public class RulesCheckers implements IRules {
                 }
 
                 if (anyPossibleKill(token.position, token.player, token.isCapital, state)) {
+                    System.out.println("A token at column " + token.position.column + " row " + token.position.row + " should have killed an enemy");
                     return false;
                 }
             }
@@ -275,25 +276,32 @@ public class RulesCheckers implements IRules {
         } else {
 
             if (state.getToken(state.getPosition(y + 1, x + 1)) != null &&
-                    state.getToken(state.getPosition(y + 1, x + 1)).player != player &&
+                    player.id == 0 &&
+                    state.getToken(state.getPosition(y + 1, x + 1)).player.id != player.id &&
                     inBoundaries(y + 2, x + 2) &&
-                    state.getToken(state.getPosition(y + 2, x + 2)) == null)
+                    state.getToken(state.getPosition(y + 2, x + 2)) == null) {
                 return true;
+            }
 
             if (state.getToken(state.getPosition(y + 1, x - 1)) != null &&
-                    state.getToken(state.getPosition(y + 1, x - 1)).player != player &&
+                    player.id == 0 &&
+                    state.getToken(state.getPosition(y + 1, x - 1)).player.id != player.id &&
                     inBoundaries(y + 2, x - 2) &&
-                    state.getToken(state.getPosition(y + 2, x - 2)) == null)
+                    state.getToken(state.getPosition(y + 2, x - 2)) == null) {
                 return true;
+            }
 
             if (state.getToken(state.getPosition(y - 1, x + 1)) != null &&
-                    state.getToken(state.getPosition(y - 1, x + 1)).player != player &&
+                    player.id == 1 &&
+                    state.getToken(state.getPosition(y - 1, x + 1)).player.id != player.id &&
                     inBoundaries(y - 2, x + 2) &&
-                    state.getToken(state.getPosition(y - 2, x + 2)) == null)
+                    state.getToken(state.getPosition(y - 2, x + 2)) == null) {
                 return true;
+            }
 
             return state.getToken(state.getPosition(y - 1, x - 1)) != null &&
-                    state.getToken(state.getPosition(y - 1, x - 1)).player != player &&
+                    player.id == 1 &&
+                    state.getToken(state.getPosition(y - 1, x - 1)).player.id != player.id &&
                     inBoundaries(y - 2, x - 2) &&
                     state.getToken(state.getPosition(y - 2, x - 2)) == null;
 
