@@ -56,8 +56,16 @@ public class Bot1 extends Bot {
 			System.out.println("Best token at position.row " + bestToken.position.row + " and position.column "
 					+ bestToken.position.column);
 			if (myKillingTokens.size() > 0) {
+			    System.out.println("Killing move");
 			    move = killingMove(bestToken, stateCheckers);
-                System.out.println("Moving token to row " + move.row + " and column " + move.column);
+                LinkedList<Position> newMoves;
+                while (move != null) {
+                    System.out.println("Moving token to row " + move.row + " and column " + move.column);
+                    moves.add(move);
+                    newMoves = new LinkedList<>();
+                    newMoves.add(move);
+                    move = killingMove(bestToken, move, stateCheckers);
+                }
                 break;
             }
 			// row above
@@ -68,13 +76,33 @@ public class Bot1 extends Bot {
 					if (stateCheckers.getToken(destination) == null) {
 					    System.out.println("Moving token to row " + destination.row + " and column " + destination.column);
 						move = destination;
+						moves.add(move);
 						break;
 					}
 				}
 			}
 		}
 
-		moves.add(move);
+		if (moves.size() == 0) {
+		    for (int i = myTokens.size() - 1; i >= 0; i--) {
+                bestToken = myTokens.get(i);
+                System.out.println("Best token at position.row " + bestToken.position.row + " and position.column "
+                        + bestToken.position.column);
+                if (bestToken.position.row + rowMoves >= 0 & bestToken.position.row + rowMoves <= stateCheckers.MAX_ROW) {
+                    if (bestToken.position.column + 1 >= 0 & bestToken.position.column + 1 <= stateCheckers.MAX_COLUMN) {
+                        Position destination = stateCheckers.getPosition(bestToken.position.row + rowMoves,
+                                bestToken.position.column + 1);
+                        if (stateCheckers.getToken(destination) == null) {
+                            System.out.println("Moving token to row " + destination.row + " and column " + destination.column);
+                            move = destination;
+                            moves.add(move);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
 		return new ActionCheckers(bestToken, moves);
 	}
 
@@ -171,6 +199,101 @@ public class Bot1 extends Bot {
             }
         }
 	    return null;
+    }
+
+    private Position killingMove(Token token, Position tokenPosition,  GameStateCheckers state) {
+        if (token.isCapital) {
+            Position position = state.getPosition(tokenPosition.row - 1, tokenPosition.column + rowMoves);
+            // left front diagonally
+            while ((state.getToken(position) == null ||
+                    state.getToken(position).player.id != this.id) &&
+                    inBoundaries(position)) {
+                if (state.getToken(position) == null) {
+                    position = state.getPosition(position.row - 1, position.column + rowMoves);
+                } else {
+                    Position potentialNewPosition = state.getPosition(position.row - 2, position.column + 2*rowMoves);
+                    if (state.getToken(potentialNewPosition) == null &&
+                            inBoundaries(potentialNewPosition)) {
+                        return potentialNewPosition;
+                    }
+                }
+            }
+            // left back
+            position = state.getPosition(tokenPosition.row + 1, tokenPosition.column - rowMoves);
+            while ((state.getToken(position) == null ||
+                    state.getToken(position).player.id != this.id) &&
+                    inBoundaries(position)) {
+                if (state.getToken(position) == null) {
+                    position = state.getPosition(position.row + 1, position.column - rowMoves);
+                } else {
+                    Position potentialNewPosition = state.getPosition(position.row + 2, position.column - 2*rowMoves);
+                    if (state.getToken(potentialNewPosition) == null &&
+                            inBoundaries(potentialNewPosition)) {
+                        return potentialNewPosition;
+                    }
+                }
+            }
+            // right front
+            position = state.getPosition(tokenPosition.row + 1, tokenPosition.column + rowMoves);
+            while ((state.getToken(position) == null ||
+                    state.getToken(position).player.id != this.id) &&
+                    inBoundaries(position)) {
+                if (state.getToken(position) == null) {
+                    position = state.getPosition(position.row + 1, position.column + rowMoves);
+                } else {
+                    Position potentialNewPosition = state.getPosition(position.row + 2, position.column + 2*rowMoves);
+                    if (state.getToken(potentialNewPosition) == null &&
+                            inBoundaries(potentialNewPosition)) {
+                        return potentialNewPosition;
+                    }
+                }
+            }
+            // right back
+            position = state.getPosition(tokenPosition.row - 1, tokenPosition.column - rowMoves);
+            while ((state.getToken(position) == null ||
+                    state.getToken(position).player.id != this.id) &&
+                    inBoundaries(position)) {
+                if (state.getToken(position) == null) {
+                    position = state.getPosition(position.row - 1, position.column - rowMoves);
+                } else {
+                    Position potentialNewPosition = state.getPosition(position.row - 2, position.column - 2*rowMoves);
+                    if (state.getToken(potentialNewPosition) == null &&
+                            inBoundaries(potentialNewPosition)) {
+                        return potentialNewPosition;
+                    }
+                }
+            }
+        } else {
+            Position position = state.getPosition(tokenPosition.row + rowMoves,
+                    tokenPosition.column - 1);
+            if (position != null) {
+                Token otherToken = state.getToken(position);
+                if (otherToken != null) {
+                    if (otherToken.player.id != this.id) {
+                        position = state.getPosition(tokenPosition.row + 2*rowMoves,
+                                tokenPosition.column - 2);
+                        if (state.getToken(position) == null && inBoundaries(position)) {
+                            return position;
+                        }
+                    }
+                }
+            }
+            position = state.getPosition(tokenPosition.row + rowMoves,
+                    tokenPosition.column + 1);
+            if (position != null) {
+                Token otherToken = state.getToken(position);
+                if (otherToken != null) {
+                    if (otherToken.player.id != this.id) {
+                        position = state.getPosition(tokenPosition.row + 2*rowMoves,
+                                tokenPosition.column + 2);
+                        if (state.getToken(position) == null && inBoundaries(position)) {
+                            return position;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 	private LinkedList<Token> myKillingTokens(GameStateCheckers state) {
