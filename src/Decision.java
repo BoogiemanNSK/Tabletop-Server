@@ -10,7 +10,7 @@ public class Decision implements Callable<IAction> {
     private Bot executor;
 
     /*
-    Decesion Constructor take as input currentBot and currentState
+    Decision Constructor take as input currentBot and currentState
      */
     Decision(Bot currentBot, IGameState currentState) {
         executor = currentBot;

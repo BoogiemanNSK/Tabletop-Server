@@ -304,14 +304,134 @@ public class Bot2 extends Bot {
 
     private LinkedList<ActionCheckers> maxKillerMoves(LinkedList<Token> killerTokens, GameStateCheckers state) {
         LinkedList<ActionCheckers> result = new LinkedList<>();
-        // TODO Get list of best killers in terms of how many enemy token they kill (kings count as 2)
+
+        int maxScore = 0, newScore;
+        for (Token t: killerTokens) {
+            LinkedList<Position> newPath = new LinkedList<>();
+            boolean[][] killed = new boolean[GameStateCheckers.MAX_ROW + 1][GameStateCheckers.MAX_COLUMN + 1];
+            newScore = bestKillPathScore(newPath, killed, t.position.row, t.position.column,
+                    t.isCapital, t.player, state);
+
+            if (newScore > maxScore) {
+                result = new LinkedList<>();
+                maxScore = newScore;
+            }
+
+            if (newScore == maxScore) {
+                ActionCheckers actionCheckers = new ActionCheckers(t, newPath);
+                result.add(actionCheckers);
+            }
+        }
+
         return result;
     }
 
-    private LinkedList<Position> bestKillPath(Position token, GameStateCheckers state) {
-        LinkedList<Position> result = new LinkedList<>();
-        // TODO Return sequence of moves that result into best killing score
-        return result;
+    private int bestKillPathScore(LinkedList<Position> path, boolean[][] killed, int row, int column,
+                                  boolean isCapital, Bot player, GameStateCheckers state) {
+        int maxScore = 0, score = 0, max_i = -1;
+        LinkedList<Position>[] paths = new LinkedList[4];
+        for (LinkedList p: paths) {
+            p = new LinkedList<Position>();
+        }
+
+        // Check if should become capital
+        if ((row == GameStateCheckers.MAX_ROW && player.id == 0) ||
+                (row == 0 && player.id == 1)) {
+            isCapital = true;
+        }
+
+        if (isCapital) {
+
+            score = tryDirectionCapital(row, column, 1, 1, paths[0], killed, player, state);
+            if (score > maxScore) {
+                max_i = 0;
+                maxScore = score;
+            }
+            score = tryDirectionCapital(row, column, 1, -1, paths[1], killed, player, state);
+            if (score > maxScore) {
+                max_i = 1;
+                maxScore = score;
+            }
+            score = tryDirectionCapital(row, column, -1, 1, paths[2], killed, player, state);
+            if (score > maxScore) {
+                max_i = 2;
+                maxScore = score;
+            }
+            score = tryDirectionCapital(row, column, -1, -1, paths[3], killed, player, state);
+            if (score > maxScore) {
+                max_i = 3;
+                maxScore = score;
+            }
+
+        } else {
+
+            score = tryDirectionNotCapital(row, column, 1, 1, paths[0], killed, player, state);
+            if (score > maxScore) {
+                max_i = 0;
+                maxScore = score;
+            }
+            score = tryDirectionNotCapital(row, column, 1, -1, paths[1], killed, player, state);
+            if (score > maxScore) {
+                max_i = 1;
+                maxScore = score;
+            }
+            score = tryDirectionNotCapital(row, column, -1, 1, paths[2], killed, player, state);
+            if (score > maxScore) {
+                max_i = 2;
+                maxScore = score;
+            }
+            score = tryDirectionNotCapital(row, column, -1, -1, paths[3], killed, player, state);
+            if (score > maxScore) {
+                max_i = 3;
+                maxScore = score;
+            }
+
+        }
+
+        path.addAll(paths[max_i]);
+        return maxScore;
+    }
+
+    private int tryDirectionNotCapital(int row, int column, int dx, int dy, LinkedList<Position> path,
+                                       boolean[][] killed, Bot player, GameStateCheckers state) {
+        int max = 0;
+
+        Position p1 = state.getPosition(row + dy, column + dx);
+        Position p2 = state.getPosition(row + dy * 2, column + dx * 2);
+        if (p1 != null && p2 != null && state.getToken(p1).player != this && state.getToken(p2) == null &&
+                !killed[p1.row][p1.column]) {
+            max = state.getToken(p1).isCapital ? 2 : 1;
+            killed[p1.row][p1.column] = true;
+            path.add(p2);
+            max += bestKillPathScore(path, killed, row + dy * 2, column + dx * 2, false, player, state);
+            killed[p1.row][p1.column] = false;
+        }
+
+        return max;
+    }
+
+    private int tryDirectionCapital(int row, int column, int dx, int dy, LinkedList<Position> path,
+                                       boolean[][] killed, Bot player, GameStateCheckers state) {
+        int temp = 1;
+        int max = 0;
+
+        Position p1 = state.getPosition(row + dy, column + dx);
+        while (p1 != null && state.getToken(p1) == null) {
+            temp++;
+            p1 = state.getPosition(row + (dy * temp), column + (dx + temp));
+        }
+
+        Position p2 = state.getPosition(row + dy * (temp + 1), column + dx * (temp + 1));
+        if (p1 != null && p2 != null && state.getToken(p1).player != this && state.getToken(p2) == null &&
+                !killed[p1.row][p1.column]) {
+            max = state.getToken(p1).isCapital ? 2 : 1;
+            killed[p1.row][p1.column] = true;
+            path.add(p2);
+            max += bestKillPathScore(path, killed, row + dy * (temp + 1), column + dx * (temp + 1), true, player, state);
+            killed[p1.row][p1.column] = false;
+        }
+
+        return max;
     }
 
 }
