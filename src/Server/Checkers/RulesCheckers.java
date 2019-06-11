@@ -22,8 +22,12 @@ public class RulesCheckers implements IRules {
     public GameResults checkResult(IGameState game) {
         GameStateCheckers gameState = (GameStateCheckers) game;
         //  if only one player is still in the game, they win
-        if (!gameState.getPlayerIsActive()[0]) { return GameResults.SECOND_WIN;}
-        if (!gameState.getPlayerIsActive()[1]) { return GameResults.FIRST_WIN;}
+        if (!gameState.getPlayerIsActive()[0]) {
+            return GameResults.SECOND_WIN;
+        }
+        if (!gameState.getPlayerIsActive()[1]) {
+            return GameResults.FIRST_WIN;
+        }
 
         //  check number of moves made: after 50 moves (each) there is no king and no token is taken -> draw
         if (moveCount == 100) {
@@ -78,7 +82,7 @@ public class RulesCheckers implements IRules {
         while (i != moveTo.row || j != moveTo.column) {
             Position next = state.getPosition(i, j);
             if (state.getToken(next) != null) {
-                if (state.getToken(next).player.id != action.token.player.id) {
+                if (state.getToken(next).player != action.token.player) {
                     noKills = false;
                     break;
                 }
@@ -120,7 +124,7 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
 
-                if (anyPossibleKill(token.position, token.player, token.isCapital, state)) {
+                if (anyPossibleKill(null, token.position, token.player, token.isCapital, state)) {
                     System.out.println("A token at column " + token.position.column + " row " + token.position.row + " should have killed an enemy");
                     return false;
                 }
@@ -196,7 +200,11 @@ public class RulesCheckers implements IRules {
 
         // Finally check that after last move, there is no possible kills left
         Position lastPosition = action.positions.getLast();
-        return !anyPossibleKill(lastPosition, action.token.player, tempIsCapital, state);
+        Position prevPosition = action.token.position;
+        if (action.positions.size() > 1) {
+            prevPosition = action.positions.get(action.positions.size() - 2);
+        }
+        return !anyPossibleKill(prevPosition, lastPosition, action.token.player, tempIsCapital, state);
     }
 
     private boolean inBoundaries(int row, int column) {
@@ -204,11 +212,11 @@ public class RulesCheckers implements IRules {
                 column >= 0 && column <= GameStateCheckers.MAX_COLUMN;
     }
 
-    public static boolean shouldBecomeCapital(int id, Position p) {
+    static boolean shouldBecomeCapital(int id, Position p) {
         return (id == 0 && p.row == GameStateCheckers.MAX_ROW) || (id == 1 && p.row == 0);
     }
 
-    private boolean anyPossibleKill(Position pos, Bot player, boolean isCapital, GameStateCheckers state) {
+    private boolean anyPossibleKill(Position prev, Position pos, Bot player, boolean isCapital, GameStateCheckers state) {
         int i, j;
         int y = pos.row;
         int x = pos.column;
@@ -226,7 +234,8 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
-                        state.getToken(state.getPosition(i + 1, j + 1)) == null)
+                        state.getToken(state.getPosition(i + 1, j + 1)) == null &&
+                        (prev == null || !(prev.row > i && prev.column > j)))
                     return true;
                 break;
             }
@@ -240,7 +249,8 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
-                        state.getToken(state.getPosition(i + 1, j - 1)) == null)
+                        state.getToken(state.getPosition(i + 1, j - 1)) == null &&
+                        (prev == null || !(prev.row > i && prev.column < j)))
                     return true;
                 break;
             }
@@ -254,7 +264,8 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
-                        state.getToken(state.getPosition(i - 1, j + 1)) == null)
+                        state.getToken(state.getPosition(i - 1, j + 1)) == null &&
+                        (prev == null || !(prev.row < i && prev.column > j)))
                     return true;
                 break;
             }
@@ -268,7 +279,8 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
-                        state.getToken(state.getPosition(i - 1, j - 1)) == null)
+                        state.getToken(state.getPosition(i - 1, j - 1)) == null &&
+                        (prev == null || !(prev.row < i && prev.column < j)))
                     return true;
                 break;
             }
@@ -278,34 +290,34 @@ public class RulesCheckers implements IRules {
         } else {
 
             if (state.getToken(state.getPosition(y + 1, x + 1)) != null &&
-                    player.id == 0 &&
-                    state.getToken(state.getPosition(y + 1, x + 1)).player.id != player.id &&
+                    state.getToken(state.getPosition(y + 1, x + 1)).player != player &&
                     inBoundaries(y + 2, x + 2) &&
-                    state.getToken(state.getPosition(y + 2, x + 2)) == null) {
+                    state.getToken(state.getPosition(y + 2, x + 2)) == null &&
+                    (prev == null || !(prev.row == y + 2 && prev.column == x + 2))) {
                 return true;
             }
 
             if (state.getToken(state.getPosition(y + 1, x - 1)) != null &&
-                    player.id == 0 &&
-                    state.getToken(state.getPosition(y + 1, x - 1)).player.id != player.id &&
+                    state.getToken(state.getPosition(y + 1, x - 1)).player != player &&
                     inBoundaries(y + 2, x - 2) &&
-                    state.getToken(state.getPosition(y + 2, x - 2)) == null) {
+                    state.getToken(state.getPosition(y + 2, x - 2)) == null &&
+                    (prev == null || !(prev.row == y + 2 && prev.column == x - 2))) {
                 return true;
             }
 
             if (state.getToken(state.getPosition(y - 1, x + 1)) != null &&
-                    player.id == 1 &&
-                    state.getToken(state.getPosition(y - 1, x + 1)).player.id != player.id &&
+                    state.getToken(state.getPosition(y - 1, x + 1)).player != player &&
                     inBoundaries(y - 2, x + 2) &&
-                    state.getToken(state.getPosition(y - 2, x + 2)) == null) {
+                    state.getToken(state.getPosition(y - 2, x + 2)) == null &&
+                    (prev == null || !(prev.row == y - 2 && prev.column == x + 2))) {
                 return true;
             }
 
             return state.getToken(state.getPosition(y - 1, x - 1)) != null &&
-                    player.id == 1 &&
-                    state.getToken(state.getPosition(y - 1, x - 1)).player.id != player.id &&
+                    state.getToken(state.getPosition(y - 1, x - 1)).player != player &&
                     inBoundaries(y - 2, x - 2) &&
-                    state.getToken(state.getPosition(y - 2, x - 2)) == null;
+                    state.getToken(state.getPosition(y - 2, x - 2)) == null &&
+                    (prev == null || !(prev.row == y - 2 && prev.column == x - 2));
 
         }
 

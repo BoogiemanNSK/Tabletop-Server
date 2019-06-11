@@ -13,8 +13,8 @@ public class Main {
     public static void main(String[] args) {
         // Fill array of bots with existing bots
         Bot[] bots = new Bot[PLAYERS];
-        bots[0] = new Bot1(0);
-        bots[1] = new Bot1(1);
+        bots[0] = new Bot2(0);
+        bots[1] = new Bot2(1);
 
         // Current game's rules
         IRules rules = new RulesCheckers();
