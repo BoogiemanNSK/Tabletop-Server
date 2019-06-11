@@ -1,9 +1,9 @@
-package TicTacToe;
+package Server.TicTacToe;
 
-import Interfaces.IAction;
-import Interfaces.IGameState;
+import Server.IAction;
+import Server.IGameState;
 
-public class GameStateTicTacToe implements IGameState {
+public class GameStateTicTacToe extends IGameState {
     private char [][] gameField;
     private boolean[] playerIsActive;
 
@@ -23,7 +23,6 @@ public class GameStateTicTacToe implements IGameState {
         return gameField;
     }
 
-    @Override
     public void showField() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++)
@@ -47,10 +46,9 @@ public class GameStateTicTacToe implements IGameState {
 
     @Override
     public boolean[] getPlayerIsActive() {
-        return playerIsActive;
+        return null;
     }
 
-    @Override
     public void makeInactive(int player) {
         playerIsActive[player] = false;
     }

@@ -1,4 +1,4 @@
-package Utils;
+package Server.Utils;
 
 /*
 All possible games results

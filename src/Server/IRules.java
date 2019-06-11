@@ -1,6 +1,6 @@
-package Interfaces;
+package Server;
 
-import Utils.GameResults;
+import Server.Utils.GameResults;
 
 public interface IRules {
 
@@ -11,7 +11,7 @@ public interface IRules {
     GameResults checkResult(IGameState game);
 
     /*
-    this method take IGameState and IAction as input
+    this method take Server.IGameState and Server.IAction as input
     return true - if action is valid
     return false - if action not possible
      */

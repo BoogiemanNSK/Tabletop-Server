@@ -1,16 +1,13 @@
-package Checkers;
+package Server.Checkers;
 
-import Interfaces.Bot;
-import Interfaces.IAction;
-import Interfaces.IGameState;
-import Interfaces.IRules;
-import Utils.GameResults;
-import Checkers.GameStateCheckers.Position;
+import Server.*;
+import Server.Utils.GameResults;
+import Server.Checkers.GameStateCheckers.Position;
 import java.util.Collection;
 
 public class RulesCheckers implements IRules {
 
-    //  Rules for Checkers notes:
+    //  Rules for Server.Checkers notes:
     //  1) Player with id = 0 starts on top (rows 0, 1, 2) and player with id = 1 on bottom (rows 5, 6 ,7)
     //  2) Positions in Action have to be logically consistent (sequential), thus,
     //          last position of token is the last position in Linked List in Action.

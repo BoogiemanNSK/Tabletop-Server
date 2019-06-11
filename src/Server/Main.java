@@ -1,5 +1,7 @@
-import Interfaces.*;
-import Checkers.*;
+package Server;
+
+import Server.Checkers.Bots.*;
+import Server.Checkers.*;
 
 public class Main {
 

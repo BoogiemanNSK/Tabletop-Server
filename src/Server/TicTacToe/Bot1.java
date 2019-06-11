@@ -1,6 +1,8 @@
-package TicTacToe;
+package Server.TicTacToe;
 
-import Interfaces.*;
+import Server.Bot;
+import Server.IAction;
+import Server.IGameState;
 import java.util.Random;
 
 public class Bot1 extends Bot {
@@ -9,7 +11,7 @@ public class Bot1 extends Bot {
     private char opponentSign;
 
     /*
-    Interfaces.Bot constructor
+    Server.Bot constructor
      */
     public Bot1(int botId) {
         super(botId);
@@ -21,7 +23,7 @@ public class Bot1 extends Bot {
     }
 
     /*
-    Main method for this class
+    Server.Main method for this class
      */
     @Override
     public IAction makeDecision(IGameState currentState) {
@@ -168,7 +170,7 @@ public class Bot1 extends Bot {
     }
 
     /*
-    Method which take as an input Interfaces.IGameState and return one dimension array of game field
+    Method which take as an input Server.IGameState and return one dimension array of game field
      */
     private char[] matrixSmall(GameStateTicTacToe s2) {
         char[] action = new char[9];

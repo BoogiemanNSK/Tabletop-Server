@@ -1,3 +1,3 @@
-package Interfaces;
+package Server;
 
 public interface IAction {}

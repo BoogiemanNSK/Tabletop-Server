@@ -1,16 +1,15 @@
-package Checkers;
+package Server.Checkers;
 
-import Interfaces.Bot;
-import Interfaces.IAction;
-import Interfaces.IGameState;
+import Server.IAction;
+import Server.Bot;
+import Server.IGameState;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class GameStateCheckers implements IGameState {
+public class GameStateCheckers extends IGameState {
 
-    //  Initial Game State of Checkers
+    //  Initial Game State of Server.Checkers
     //    ☺  ☺  ☺  ☺
     //  ☺  ☺  ☺  ☺      PLAYER 0
     //    ☺  ☺  ☺  ☺
@@ -26,10 +25,10 @@ public class GameStateCheckers implements IGameState {
     private int moveCount;
     private boolean[] playerIsActive;
 
-    final static int MAX_ROW = 7;
-    final static int MAX_COLUMN = 7;
+    public final static int MAX_ROW = 7;
+    public final static int MAX_COLUMN = 7;
 
-    class Token {
+    public class Token {
         Bot player;
         Position position;
         boolean isCapital;
@@ -39,26 +38,46 @@ public class GameStateCheckers implements IGameState {
             this.position = position;
             isCapital = false;
         }
+
+        public Bot getPlayer() {
+            return player;
+        }
+
+        public Position getPosition() {
+            return position;
+        }
+
+        public boolean getIsCapital() {
+            return isCapital;
+        }
     }
 
-    class Position {
+    public class Position {
         int row, column;
 
         Position(int row, int column) {
             this.row = row;
             this.column = column;
         }
+
+        public int getColumn() {
+            return column;
+        }
+
+        public int getRow() {
+            return row;
+        }
     }
 
-    Token getToken(Position position) {
+    public Token getToken(Position position) {
         return gameField.get(position);
     }
 
-    Collection<Token> getAllTokens() {
+    public Collection<Token> getAllTokens() {
         return gameField.values();
     }
 
-    Position getPosition(int row, int column) {
+    public Position getPosition(int row, int column) {
         if ((MAX_COLUMN + 1) * row + column > (MAX_ROW + 1) * (MAX_COLUMN + 1) - 1 ||
                 (MAX_COLUMN + 1) * row + column < 0 ||
                 row < 0 || row > MAX_ROW ||
@@ -82,12 +101,10 @@ public class GameStateCheckers implements IGameState {
         return moveCount;
     }
 
-    @Override
     public boolean[] getPlayerIsActive() {
         return playerIsActive;
     }
 
-    @Override
     public void makeInactive(int player) {
         playerIsActive[player] = false;
     }
@@ -170,7 +187,7 @@ public class GameStateCheckers implements IGameState {
     }
 
     @Override
-    public void update(IAction x) {
+    protected void update(IAction x) {
         ActionCheckers action = (ActionCheckers) x;
         GameStateCheckers state = this;
 

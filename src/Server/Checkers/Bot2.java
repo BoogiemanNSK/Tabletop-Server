@@ -1,10 +1,10 @@
-package Checkers;
+package Server.Checkers;
 
-import Interfaces.Bot;
-import Interfaces.IAction;
-import Interfaces.IGameState;
-import Checkers.GameStateCheckers.Position;
-import Checkers.GameStateCheckers.Token;
+import Server.Bot;
+import Server.IAction;
+import Server.IGameState;
+import Server.Checkers.GameStateCheckers.Position;
+import Server.Checkers.GameStateCheckers.Token;
 
 import java.util.Collection;
 import java.util.LinkedList;

@@ -1,5 +1,6 @@
-import Interfaces.*;
-import Utils.GameResults;
+package Server;
+
+import Server.Utils.GameResults;
 
 import java.util.concurrent.*;
 

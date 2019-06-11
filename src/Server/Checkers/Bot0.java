@@ -1,13 +1,13 @@
-package Checkers;
+package Server.Checkers;
 
 import java.util.LinkedList;
 import java.util.Random;
 
-import Checkers.GameStateCheckers.Position;
-import Checkers.GameStateCheckers.Token;
-import Interfaces.Bot;
-import Interfaces.IAction;
-import Interfaces.IGameState;
+import Server.Checkers.GameStateCheckers.Position;
+import Server.Checkers.GameStateCheckers.Token;
+import Server.Bot;
+import Server.IAction;
+import Server.IGameState;
 
 public class Bot0 extends Bot {
 

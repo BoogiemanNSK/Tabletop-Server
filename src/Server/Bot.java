@@ -1,4 +1,4 @@
-package Interfaces;
+package Server;
 
 public abstract class Bot {
 

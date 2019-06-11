@@ -1,8 +1,10 @@
-package TicTacToe;
+package Server.TicTacToe;
 
-import Interfaces.*;
 import java.util.Random;
 
+import Server.Bot;
+import Server.IAction;
+import Server.IGameState;
 public class Bot2 extends Bot {
 
     private char mySign;

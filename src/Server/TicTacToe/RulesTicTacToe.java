@@ -1,8 +1,10 @@
-package TicTacToe;
+package Server.TicTacToe;
 
-import Interfaces.*;
-import Utils.GameResults;
+import Server.Utils.GameResults;
 
+import Server.IRules;
+import Server.IAction;
+import Server.IGameState;
 public class RulesTicTacToe implements IRules {
 
     static final char[] PLAYERS_SYMBOLS = {'X', 'O'};

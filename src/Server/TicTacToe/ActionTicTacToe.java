@@ -1,6 +1,6 @@
-package TicTacToe;
+package Server.TicTacToe;
 
-import Interfaces.IAction;
+import Server.IAction;
 
 class ActionTicTacToe implements IAction {
 
