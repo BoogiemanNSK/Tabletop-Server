@@ -48,24 +48,41 @@ public class Bot2 extends Bot {
 
         // Choose the best move, considering how close it is to enemy line
         ActionCheckers bestMove = null;
+        LinkedList<ActionCheckers> finalBestResults = new LinkedList<>();
         for (ActionCheckers t : bestMoves) {
             if (bestMove == null || !t.getToken().getIsCapital() &&
                     Math.abs(enemyLine - t.getPositions().getLast().getRow()) <
                             Math.abs(enemyLine - bestMove.getPositions().getLast().getRow())) {
                 bestMove = t;
+                finalBestResults = new LinkedList<>();
+                finalBestResults.add(bestMove);
+            } else if (Math.abs(enemyLine - t.getPositions().getLast().getRow()) ==
+                    Math.abs(enemyLine - bestMove.getPositions().getLast().getRow())) {
+                finalBestResults.add(t);
             }
+        }
+
+        if (bestMoves.size() == 0) {
+            return null;
         }
         if (bestMove == null) {
             int r = (int) (Math.random() * bestMoves.size());
             bestMove = bestMoves.get(r);
+        }
+        if (finalBestResults.size() > 1) {
+            int r = (int) (Math.random() * finalBestResults.size());
+            bestMove = finalBestResults.get(r);
         }
 
         return bestMove;
     }
 
     private boolean isSafe(ActionCheckers move, GameStateCheckers state) {
-        int y = move.getToken().getPosition().getRow();
-        int x = move.getToken().getPosition().getColumn();
+        LinkedList<Position> positions = move.getPositions();
+        int y = positions.getLast().getRow();
+        int x = positions.getLast().getColumn();
+        Position prev = positions.size() > 1 ? positions.get(positions.size() - 2) : move.getToken().getPosition();
+
         int i, j;
         Position p;
 
@@ -78,8 +95,10 @@ public class Bot2 extends Bot {
             p = state.getPosition(i, j);
         }
         if (p != null && state.getToken(p).getPlayer() != this) {
-            if ((state.getToken(p).getIsCapital() || i == p.getRow() - 1) &&
-                    state.getToken(state.getPosition(i - 1, j - 1)) == null) {
+            if ((state.getToken(p).getIsCapital() || y == p.getRow() - 1) &&
+                    state.getPosition(y - 1, x - 1) != null &&
+                    (state.getToken(state.getPosition(y - 1, x - 1)) == null ||
+                            prev.getRow() < y && prev.getColumn() < x)) {
                 return false;
             }
         }
@@ -93,8 +112,10 @@ public class Bot2 extends Bot {
             p = state.getPosition(i, j);
         }
         if (p != null && state.getToken(p).getPlayer() != this) {
-            if ((state.getToken(p).getIsCapital() || i == p.getRow() - 1) &&
-                    state.getToken(state.getPosition(i - 1, j + 1)) == null) {
+            if ((state.getToken(p).getIsCapital() || y == p.getRow() - 1) &&
+                    state.getPosition(y - 1, x + 1) != null &&
+                    (state.getToken(state.getPosition(y - 1, x + 1)) == null ||
+                            prev.getRow() < y && prev.getColumn() > x)) {
                 return false;
             }
         }
@@ -108,8 +129,10 @@ public class Bot2 extends Bot {
             p = state.getPosition(i, j);
         }
         if (p != null && state.getToken(p).getPlayer() != this) {
-            if ((state.getToken(p).getIsCapital() || i == p.getRow() + 1) &&
-                    state.getToken(state.getPosition(i + 1, j - 1)) == null) {
+            if ((state.getToken(p).getIsCapital() || y == p.getRow() + 1) &&
+                    state.getPosition(y + 1, x - 1) != null &&
+                    (state.getToken(state.getPosition(y + 1, x - 1)) == null ||
+                            prev.getRow() > y && prev.getColumn() < x)) {
                 return false;
             }
         }
@@ -123,8 +146,10 @@ public class Bot2 extends Bot {
             p = state.getPosition(i, j);
         }
         if (p != null && state.getToken(p).getPlayer() != this) {
-            return (!state.getToken(p).getIsCapital() && i != p.getRow() + 1) ||
-                    state.getToken(state.getPosition(i + 1, j + 1)) != null;
+            return (!state.getToken(p).getIsCapital() && y != p.getRow() + 1) ||
+                    state.getPosition(y + 1, x + 1) == null ||
+                    (state.getToken(state.getPosition(y + 1, x + 1)) != null &&
+                            (prev.getRow() <= y || prev.getColumn() <= x));
         }
 
         return true;
@@ -201,11 +226,10 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.getRow() - 1, position.getColumn() + 1);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.getRow() - 2, position.getColumn() + 2);
-                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null) {
+                            Position potentialNewPosition = state.getPosition(position.getRow() - 1, position.getColumn() + 1);
+                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null)
                                 result.add(myToken);
-                                break;
-                            }
+                            break;
                         }
                     }
 
@@ -215,11 +239,10 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.getRow() + 1, position.getColumn() - 1);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.getRow() + 2, position.getColumn() - 2);
-                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null) {
+                            Position potentialNewPosition = state.getPosition(position.getRow() + 1, position.getColumn() - 1);
+                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null)
                                 result.add(myToken);
-                                break;
-                            }
+                            break;
                         }
                     }
 
@@ -229,11 +252,10 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.getRow() + 1, position.getColumn() + 1);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.getRow() + 2, position.getColumn() + 2);
-                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null) {
+                            Position potentialNewPosition = state.getPosition(position.getRow() + 1, position.getColumn() + 1);
+                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null)
                                 result.add(myToken);
-                                break;
-                            }
+                            break;
                         }
                     }
 
@@ -243,11 +265,10 @@ public class Bot2 extends Bot {
                         if (state.getToken(position) == null) {
                             position = state.getPosition(position.getRow() - 1, position.getColumn() - 1);
                         } else {
-                            Position potentialNewPosition = state.getPosition(position.getRow() - 2, position.getColumn() - 2);
-                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null) {
+                            Position potentialNewPosition = state.getPosition(position.getRow() - 1, position.getColumn() - 1);
+                            if (potentialNewPosition != null && state.getToken(potentialNewPosition) == null)
                                 result.add(myToken);
-                                break;
-                            }
+                            break;
                         }
                     }
                 }
@@ -271,7 +292,7 @@ public class Bot2 extends Bot {
                     i = y + 1;
                     j = x + 1;
                     p = state.getPosition(i, j);
-                    while (p != null) {
+                    while (p != null && state.getToken(p) == null) {
                         addIfFree(result, t, p, state);
                         i++;
                         j++;
@@ -281,7 +302,7 @@ public class Bot2 extends Bot {
                     i = y + 1;
                     j = x - 1;
                     p = state.getPosition(i, j);
-                    while (p != null) {
+                    while (p != null && state.getToken(p) == null) {
                         addIfFree(result, t, p, state);
                         i++;
                         j--;
@@ -291,7 +312,7 @@ public class Bot2 extends Bot {
                     i = y - 1;
                     j = x + 1;
                     p = state.getPosition(i, j);
-                    while (p != null) {
+                    while (p != null && state.getToken(p) == null) {
                         addIfFree(result, t, p, state);
                         i--;
                         j++;
@@ -301,7 +322,7 @@ public class Bot2 extends Bot {
                     i = y - 1;
                     j = x - 1;
                     p = state.getPosition(i, j);
-                    while (p != null) {
+                    while (p != null && state.getToken(p) == null) {
                         addIfFree(result, t, p, state);
                         i--;
                         j--;
@@ -355,7 +376,7 @@ public class Bot2 extends Bot {
 
     private int bestKillPathScore(LinkedList<Position> path, boolean[][] killed, int row, int column,
                                   boolean isCapital, Bot player, GameStateCheckers state) {
-        int maxScore = 0, score = 0, max_i = -1;
+        int maxScore = 0, score, max_i = -1;
         LinkedList<Position>[] paths = new LinkedList[4];
         for (int i = 0; i < paths.length; i++) {
             paths[i] = new LinkedList<>();
@@ -367,52 +388,18 @@ public class Bot2 extends Bot {
             isCapital = true;
         }
 
-        if (isCapital) {
+        for (int i = 0; i < 4; i++) {
+            int dx = (i < 2) ? 1 : -1;
+            int dy = (i % 2 == 0) ? -1 : 1;
 
-            score = tryDirectionCapital(row, column, 1, 1, paths[0], killed, player, state);
-            if (score > maxScore) {
-                max_i = 0;
-                maxScore = score;
-            }
-            score = tryDirectionCapital(row, column, 1, -1, paths[1], killed, player, state);
-            if (score > maxScore) {
-                max_i = 1;
-                maxScore = score;
-            }
-            score = tryDirectionCapital(row, column, -1, 1, paths[2], killed, player, state);
-            if (score > maxScore) {
-                max_i = 2;
-                maxScore = score;
-            }
-            score = tryDirectionCapital(row, column, -1, -1, paths[3], killed, player, state);
-            if (score > maxScore) {
-                max_i = 3;
-                maxScore = score;
-            }
+            score = isCapital ?
+                    tryDirectionCapital(row, column, dx, dy, paths[i], killed, player, state) :
+                    tryDirectionNotCapital(row, column, dx, dy, paths[i], killed, player, state);
 
-        } else {
-
-            score = tryDirectionNotCapital(row, column, 1, 1, paths[0], killed, player, state);
             if (score > maxScore) {
-                max_i = 0;
+                max_i = i;
                 maxScore = score;
             }
-            score = tryDirectionNotCapital(row, column, 1, -1, paths[1], killed, player, state);
-            if (score > maxScore) {
-                max_i = 1;
-                maxScore = score;
-            }
-            score = tryDirectionNotCapital(row, column, -1, 1, paths[2], killed, player, state);
-            if (score > maxScore) {
-                max_i = 2;
-                maxScore = score;
-            }
-            score = tryDirectionNotCapital(row, column, -1, -1, paths[3], killed, player, state);
-            if (score > maxScore) {
-                max_i = 3;
-                maxScore = score;
-            }
-
         }
 
         if (max_i != -1)

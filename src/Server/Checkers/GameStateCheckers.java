@@ -21,8 +21,6 @@ public class GameStateCheckers extends IGameState {
 
     private HashMap<Position, Token> gameField;
     private Position[] allPositions;
-
-    private int moveCount;
     private boolean[] playerIsActive;
 
     public final static int MAX_ROW = 7;
@@ -78,27 +76,16 @@ public class GameStateCheckers extends IGameState {
     }
 
     public Position getPosition(int row, int column) {
-        if ((MAX_COLUMN + 1) * row + column > (MAX_ROW + 1) * (MAX_COLUMN + 1) - 1 ||
-                (MAX_COLUMN + 1) * row + column < 0 ||
-                row < 0 || row > MAX_ROW ||
-                column < 0 || column > MAX_COLUMN) {
+        if (row < 0 || row > MAX_ROW || column < 0 || column > MAX_COLUMN) {
             return null;
         }
         return allPositions[(MAX_COLUMN + 1) * row + column];
     }
 
-    void moveToken(Token token, Position newPos) {
+    private void moveToken(Token token, Position newPos) {
         gameField.remove(token.position);
         gameField.put(newPos, token);
         token.position = newPos;
-    }
-
-    void killToken(Token token) {
-        gameField.remove(token.position);
-    }
-
-    int getMoveCount() {
-        return moveCount;
     }
 
     public boolean[] getPlayerIsActive() {
@@ -129,7 +116,6 @@ public class GameStateCheckers extends IGameState {
             }
         }
 
-        moveCount = 0;
         playerIsActive = new boolean[2];
         playerIsActive[0] = true;
         playerIsActive[1] = true;
@@ -137,9 +123,9 @@ public class GameStateCheckers extends IGameState {
 
     @Override
     public String toString() {
-        Bot temp = null;
+        int whitePlayerId = 0;
         char c;
-        String out = "";
+        StringBuilder out = new StringBuilder();
 
         for (int i = 0; i <= MAX_ROW; i++) {
             for (int j = 0; j <= MAX_COLUMN; j++) {
@@ -147,43 +133,23 @@ public class GameStateCheckers extends IGameState {
                 if (cell == null) {
                     c = '_';
                 } else {
-                    if (temp == null) { temp = cell.player; }
-                    if (cell.player == temp) {
+                    if (cell.player.id == whitePlayerId) {
                         c = cell.isCapital ? 'W' : 'w';
                     } else {
                         c = cell.isCapital ? 'B' : 'b';
                     }
                 }
-                out = out + c;
+                out.append(c);
             }
-            out = out + '\n';
+            out.append('\n');
         }
 
-        return out;
+        return out.toString();
     }
 
     @Override
     public void showField() {
-        Bot temp = null;
-        char c;
-
-        for (int i = 0; i <= MAX_ROW; i++) {
-            for (int j = 0; j <= MAX_COLUMN; j++) {
-                Token cell = getToken(getPosition(i, j));
-                if (cell == null) {
-                    c = '_';
-                } else {
-                    if (temp == null) { temp = cell.player; }
-                    if (cell.player == temp) {
-                        c = cell.isCapital ? 'W' : 'w';
-                    } else {
-                        c = cell.isCapital ? 'B' : 'b';
-                    }
-                }
-                System.out.print(c);
-            }
-            System.out.println();
-        }
+        System.out.println(toString());
     }
 
     @Override
@@ -202,7 +168,7 @@ public class GameStateCheckers extends IGameState {
             while (i != p.row || j != p.column) {
                 Token token = state.getToken(state.getPosition(i, j));
                 if (token != null) {
-                    state.killToken(token);
+                    state.gameField.remove(token.position);
                 }
 
                 i += dy;
@@ -220,8 +186,6 @@ public class GameStateCheckers extends IGameState {
         // Update position of token
         lastPosition = action.positions.getLast();
         state.moveToken(action.token, lastPosition);
-
-        moveCount++;
     }
 
 }

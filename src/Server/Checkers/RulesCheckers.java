@@ -13,9 +13,11 @@ public class RulesCheckers implements IRules {
     //          last position of token is the last position in Linked List in Action.
 
     private int moveCount;
+    private int lastTokensAmount;
 
     public RulesCheckers() {
         moveCount = 0;
+        lastTokensAmount = -1;
     }
 
     @Override
@@ -29,21 +31,18 @@ public class RulesCheckers implements IRules {
             return GameResults.FIRST_WIN;
         }
 
-        //  check number of moves made: after 50 moves (each) there is no king and no token is taken -> draw
+        // Recalculate tokens and moves amount
+        moveCount++;
+        if (lastTokensAmount == -1) {
+            lastTokensAmount = gameState.getAllTokens().size();
+        } else if (lastTokensAmount != gameState.getAllTokens().size()) {
+            lastTokensAmount = gameState.getAllTokens().size();
+            moveCount = 0;
+        }
+
+        // If after 100 moves amount of token stays unchanged - it is draw.
         if (moveCount == 100) {
-            int capitalNum = 0;
-            int[] tokensNum = {0, 0};
-            for (GameStateCheckers.Token token : gameState.getAllTokens()) {
-                if (token.isCapital) {
-                    capitalNum++;
-                }
-                tokensNum[token.player.id]++;
-            }
-            if (capitalNum == 0) {
-                if (tokensNum[0] == 12 && tokensNum[1] == 12) {
-                    return GameResults.HALF_WIN;
-                }
-            }
+            return GameResults.HALF_WIN;
         }
 
         //  if all player's tokens are captured, the other player wins
@@ -66,7 +65,8 @@ public class RulesCheckers implements IRules {
         ActionCheckers action = (ActionCheckers) iaction;
         GameStateCheckers state = (GameStateCheckers) game;
 
-        if (action.positions.size() < 1)
+        if (action == null || action.getToken() == null ||
+                action.getPositions() == null || action.positions.size() < 1)
             return false;
 
         // Check if there are any kills in the way
@@ -234,6 +234,7 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getPosition(i + 1, j + 1) != null &&
                         state.getToken(state.getPosition(i + 1, j + 1)) == null &&
                         (prev == null || !(prev.row > i && prev.column > j)))
                     return true;
@@ -249,6 +250,7 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getPosition(i + 1, j - 1) != null &&
                         state.getToken(state.getPosition(i + 1, j - 1)) == null &&
                         (prev == null || !(prev.row > i && prev.column < j)))
                     return true;
@@ -264,6 +266,7 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getPosition(i - 1, j + 1) != null &&
                         state.getToken(state.getPosition(i - 1, j + 1)) == null &&
                         (prev == null || !(prev.row < i && prev.column > j)))
                     return true;
@@ -279,6 +282,7 @@ public class RulesCheckers implements IRules {
                     continue;
                 }
                 if (state.getToken(state.getPosition(i, j)).player != player &&
+                        state.getPosition(i - 1, j - 1) != null &&
                         state.getToken(state.getPosition(i - 1, j - 1)) == null &&
                         (prev == null || !(prev.row < i && prev.column < j)))
                     return true;

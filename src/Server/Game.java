@@ -66,22 +66,21 @@ class Game {
 
                 // Validate bot's action
                 if (rules.validate(state, decision)) {
-                    // Update game state with bot's action
+                    // Update game state with bot's action and print new state
                     state.update(decision);
-
-                    // Print Game state
                     state.showField();
-
-                    // Check for finishing state
-                    GameResults result = rules.checkResult(state);
-                    if (result != GameResults.GAME_NOT_OVER) {
-                        gameFinished = true;
-                        printResult(result, turn);
-                        continue;
-                    }
                 } else {
+                    // 'Deactivate' bot that made mistake
                     System.out.println("Bot #" + (turn + 1) + " made invalid action. It has lost.");
                     state.makeInactive(turn);
+                }
+
+                // Check for finishing state
+                GameResults result = rules.checkResult(state);
+                if (result != GameResults.GAME_NOT_OVER) {
+                    gameFinished = true;
+                    printResult(result, turn);
+                    continue;
                 }
             } catch (InterruptedException | ExecutionException e) {
                 // Internal thread exceptions
