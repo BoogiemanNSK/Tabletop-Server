@@ -1,8 +1,10 @@
-package TicTacToe;
+package Server.TicTacToe;
 
-import Interfaces.*;
-import Utils.GameResults;
+import Server.Utils.GameResults;
 
+import Server.IRules;
+import Server.IAction;
+import Server.IGameState;
 public class RulesTicTacToe implements IRules {
 
     static final char[] PLAYERS_SYMBOLS = {'X', 'O'};
@@ -10,7 +12,7 @@ public class RulesTicTacToe implements IRules {
 
     // Checks correctness of the action performed by bot
     @Override
-    public boolean validate(IGameState game, IAction x){
+    public boolean validate(IGameState game, IAction x) {
         GameStateTicTacToe y = (GameStateTicTacToe) game;
         ActionTicTacToe u = (ActionTicTacToe) x;
 
@@ -25,12 +27,12 @@ public class RulesTicTacToe implements IRules {
     }
 
     // Checks current state of the game and returns result string
-    public GameResults checkResult(IGameState game){
+    public GameResults checkResult(IGameState game) {
         GameStateTicTacToe y = (GameStateTicTacToe) game;
         char[][] board = y.GameField();
 
         for (int i = 0; i < 3; i++) {
-            if (board[i][0] == board[i][1] & board[i][1] == board[0][2]) {
+            if (board[i][0] == board[i][1] & board[i][1] == board[i][2]) {
                 if (board[i][0] == PLAYERS_SYMBOLS[0])
                     return GameResults.FIRST_WIN;
                 if (board[i][0] == PLAYERS_SYMBOLS[1])
@@ -69,17 +71,6 @@ public class RulesTicTacToe implements IRules {
         }
 
         return GameResults.HALF_WIN;
-    }
-
-    // Updates game board according to specified action
-    public void update(IGameState game, IAction x){
-        GameStateTicTacToe y = (GameStateTicTacToe) game;
-        ActionTicTacToe u = (ActionTicTacToe) x;
-
-        char[][] board = y.GameField();
-        int position = u.position;
-
-        board[position / 3][position % 3] = u.symbol;
     }
 
 }

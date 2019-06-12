@@ -1,5 +1,6 @@
-import Interfaces.*;
-import Utils.GameResults;
+package Server;
+
+import Server.Utils.GameResults;
 
 import java.util.concurrent.*;
 
@@ -9,7 +10,6 @@ class Game {
     private int players;
     private int timeout;
     private int botsLost;
-    private boolean[] inGame;
     private Bot[] bots;
     private IRules rules;
     private IGameState state;
@@ -27,11 +27,6 @@ class Game {
         bots = arrayOfBots;
         rules = gameRules;
         state = gameState;
-
-        inGame = new boolean[players];
-        for (int i = 0; i < players; i++) {
-            inGame[i] = true;
-        }
     }
 
     // Main Game Process
@@ -45,7 +40,7 @@ class Game {
         int turn = 0;
         while (!gameFinished) {
             // Check if any bots are left in-game and skip if current bot is lost.
-            if (!inGame[turn]) {
+            if (!state.getPlayerIsActive()[turn]) {
                 if (turn == 0) {
                     botsLost = 1;
                 } else {
@@ -71,31 +66,30 @@ class Game {
 
                 // Validate bot's action
                 if (rules.validate(state, decision)) {
-                    // Update game state with bot's action
-                    rules.update(state, decision);
-
-                    // Print Game state
+                    // Update game state with bot's action and print new state
+                    state.update(decision);
                     state.showField();
-
-                    // Check for finishing state
-                    GameResults result = rules.checkResult(state);
-                    if (result != GameResults.GAME_NOT_OVER) {
-                        gameFinished = true;
-                        printResult(result, turn);
-                        continue;
-                    }
                 } else {
+                    // 'Deactivate' bot that made mistake
                     System.out.println("Bot #" + (turn + 1) + " made invalid action. It has lost.");
-                    inGame[turn] = false;
+                    state.makeInactive(turn);
+                }
+
+                // Check for finishing state
+                GameResults result = rules.checkResult(state);
+                if (result != GameResults.GAME_NOT_OVER) {
+                    gameFinished = true;
+                    printResult(result, turn);
+                    continue;
                 }
             } catch (InterruptedException | ExecutionException e) {
                 // Internal thread exceptions
                 e.printStackTrace();
-                inGame[turn] = false;
+                state.makeInactive(turn);
             } catch (TimeoutException te) {
                 // No trial was made in TIMEOUT seconds
                 System.out.println("Bot #" + (turn + 1) + " was timed out. It has lost.");
-                inGame[turn] = false;
+                state.makeInactive(turn);
             }
 
             // Give turn to the next bot

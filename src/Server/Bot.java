@@ -1,8 +1,8 @@
-package Interfaces;
+package Server;
 
 public abstract class Bot {
 
-    int id;
+    public int id;
     public Bot(int botId) { id = botId; }
     public abstract IAction makeDecision(final IGameState currentState);
 

@@ -1,6 +1,11 @@
-package Utils;
+package Server.Utils;
 
+/*
+All possible games results
+ */
 public enum GameResults {
+
+
 
     DEAD_HEAT("0:0"),
     FIRST_WIN("1:0"),
@@ -14,7 +19,9 @@ public enum GameResults {
     GameResults(String s) {
         this.code = s;
     }
-
+/*
+return code of this game result
+ */
     public String getCode() {
         return code;
     }
