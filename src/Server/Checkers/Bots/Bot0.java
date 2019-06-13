@@ -1,11 +1,7 @@
 package Server.Checkers.Bots;
 
-
 import java.util.LinkedList;
 import java.util.Random;
-
-
-
 import Server.Bot;
 import Server.Checkers.ActionCheckers;
 import Server.Checkers.GameStateCheckers;
